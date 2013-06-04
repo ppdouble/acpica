@@ -595,11 +595,9 @@ AcpiDmUnicode (
     WordData = ACPI_CAST_PTR (UINT16, Op->Named.Data);
     WordCount = ACPI_DIV_2 (((UINT32) Op->Common.Value.Integer));
 
-
-    AcpiOsPrintf ("\"");
-
     /* Write every other byte as an ASCII character */
 
+    AcpiOsPrintf ("\"");
     for (i = 0; i < (WordCount - 1); i++)
     {
         AcpiOsPrintf ("%c", (int) WordData[i]);

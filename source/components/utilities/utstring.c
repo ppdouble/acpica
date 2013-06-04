@@ -467,7 +467,8 @@ ErrorExit:
  * FUNCTION:    AcpiUtPrintString
  *
  * PARAMETERS:  String          - Null terminated ASCII string
- *              MaxLength       - Maximum output length
+ *              MaxLength       - Maximum output length. Used to constrain the
+ *                                length of strings during debug output only.
  *
  * RETURN:      None
  *
