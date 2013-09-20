@@ -178,7 +178,7 @@ extern UINT8                AcpiGbl_DisableSsdtTableLoad;
     static ACPI_INLINE Prototype {return(AE_OK);}
 
 #define ACPI_HW_DEPENDENT_RETURN_VOID(Prototype) \
-    static ACPI_INLINE Prototype {}
+    static ACPI_INLINE Prototype {return;}
 
 #endif /* !ACPI_REDUCED_HARDWARE */
 
@@ -266,21 +266,6 @@ AcpiDecodePldBuffer (
     UINT8                   *InBuffer,
     ACPI_SIZE               Length,
     ACPI_PLD_INFO           **ReturnBuffer);
-
-/*
- * ACPI Memory management
- */
-void *
-AcpiAllocate (
-    UINT32                  Size);
-
-void *
-AcpiCallocate (
-    UINT32                  Size);
-
-void
-AcpiFree (
-    void                    *Address);
 
 
 /*

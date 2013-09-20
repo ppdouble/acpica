@@ -192,6 +192,14 @@ static inline acpi_thread_id acpi_os_get_thread_id(void)
 }
 
 /*
+ * Memory allocation/deallocation
+ */
+
+/* Use native linux version of acpi_os_allocate_zeroed */
+
+#define USE_NATIVE_ALLOCATE_ZEROED
+
+/*
  * The irqs_disabled() check is for resume from RAM.
  * Interrupts are off during resume, just like they are for boot.
  * However, boot has  (system_state != SYSTEM_RUNNING)
@@ -213,9 +221,11 @@ static inline void *acpi_os_acquire_object(acpi_cache_t * cache)
         irqs_disabled() ? GFP_ATOMIC : GFP_KERNEL);
 }
 
-#define ACPI_ALLOCATE(a)        acpi_os_allocate(a)
-#define ACPI_ALLOCATE_ZEROED(a) acpi_os_allocate_zeroed(a)
-#define ACPI_FREE(a)            kfree(a)
+static inline void acpi_os_free(void *a)
+{
+    kfree(a);
+}
+
 
 #ifndef CONFIG_PREEMPT
 /*
@@ -246,6 +256,10 @@ static inline void *acpi_os_acquire_object(acpi_cache_t * cache)
 	}							\
 	lock ? AE_OK : AE_NO_MEMORY;				\
 })
+
+#ifdef EXPORT_ACPI_INTERFACES
+#include <linux/export.h>
+#endif
 
 #endif /* __KERNEL__ */
 
