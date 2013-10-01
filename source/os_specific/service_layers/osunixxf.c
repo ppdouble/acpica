@@ -165,6 +165,7 @@ typedef void* (*PTHREAD_CALLBACK) (void *);
 /* REVIEW_REHABMAN: temp hack for building for Mac */
 #ifdef ACPI_EXEC_APP
 #undef ACPI_EXEC_APP
+#define ACPI_EXEC_APP_HACK
 #endif
 
 #ifdef ACPI_EXEC_APP
@@ -544,7 +545,7 @@ AcpiOsVprintf (
 }
 
 
-#ifndef ACPI_EXEC_APP
+#if !defined(ACPI_EXEC_APP) && !defined(ACPI_EXEC_APP_HACK)
 /******************************************************************************
  *
  * FUNCTION:    AcpiOsGetLine
