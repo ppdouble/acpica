@@ -240,10 +240,6 @@ ACPI_STRING_TABLE           LinuxDataTypes[] = {
     {"INT16",                   "s16",              REPLACE_WHOLE_WORD},
     {"INT8",                    "s8",               REPLACE_WHOLE_WORD},
 
-    /* Include file paths */
-
-    {"\"acpi.h\"",              "<acpi/acpi.h>",    REPLACE_WHOLE_WORD},
-
     {NULL,                      NULL,               0}
 };
 
@@ -766,6 +762,44 @@ ACPI_IDENTIFIER_TABLE       LinuxConditionalIdentifiers[] = {
     {NULL}
 };
 
+
+ACPI_STRING_TABLE           LinuxSpecialStrings[] = {
+
+    /* Include file paths */
+
+    {"\"acpi.h\"",              "<acpi/acpi.h>",                REPLACE_WHOLE_WORD},
+    {"\"acpiosxf.h\"",          "<acpi/acpiosxf.h>",            REPLACE_WHOLE_WORD},
+    {"\"acpixf.h\"",            "<acpi/acpixf.h>",              REPLACE_WHOLE_WORD},
+    {"\"acbuffer.h\"",          "<acpi/acbuffer.h>",            REPLACE_WHOLE_WORD},
+    {"\"acconfig.h\"",          "<acpi/acconfig.h>",            REPLACE_WHOLE_WORD},
+    {"\"acexcep.h\"",           "<acpi/acexcep.h>",             REPLACE_WHOLE_WORD},
+    {"\"acnames.h\"",           "<acpi/acnames.h>",             REPLACE_WHOLE_WORD},
+    {"\"acoutput.h\"",          "<acpi/acoutput.h>",            REPLACE_WHOLE_WORD},
+    {"\"acrestyp.h\"",          "<acpi/acrestyp.h>",            REPLACE_WHOLE_WORD},
+    {"\"actbl.h\"",             "<acpi/actbl.h>",               REPLACE_WHOLE_WORD},
+    {"\"actbl1.h\"",            "<acpi/actbl1.h>",              REPLACE_WHOLE_WORD},
+    {"\"actbl2.h\"",            "<acpi/actbl2.h>",              REPLACE_WHOLE_WORD},
+    {"\"actbl3.h\"",            "<acpi/actbl3.h>",              REPLACE_WHOLE_WORD},
+    {"\"actypes.h\"",           "<acpi/actypes.h>",             REPLACE_WHOLE_WORD},
+    {"\"platform/acenv.h\"",    "<acpi/platform/acenv.h>",      REPLACE_WHOLE_WORD},
+    {"\"acgcc.h\"",             "<acpi/platform/acgcc.h>",      REPLACE_WHOLE_WORD},
+    {"\"aclinux.h\"",           "<acpi/platform/aclinux.h>",    REPLACE_WHOLE_WORD},
+
+    {NULL,                      NULL,               0}
+};
+
+
+ACPI_IDENTIFIER_TABLE       LinuxSpecialMacros[] = {
+
+    {"ACPI_EXPORT_SYMBOL"},
+    {"ACPI_EXPORT_SYMBOL_INIT"},
+    {"ACPI_HW_DEPENDENT_RETURN_OK"},
+    {"ACPI_HW_DEPENDENT_RETURN_STATUS"},
+    {"ACPI_HW_DEPENDENT_RETURN_VOID"},
+    {NULL}
+};
+
+
 ACPI_CONVERSION_TABLE       LinuxConversionTable = {
 
     DualLicenseHeader,
@@ -780,6 +814,7 @@ ACPI_CONVERSION_TABLE       LinuxConversionTable = {
     NULL,
     LinuxEliminateMacros,
     AcpiIdentifiers,
+    NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_CHECK_BRACES | CVT_TRIM_LINES | CVT_BRACES_ON_SAME_LINE |
      CVT_MIXED_CASE_TO_UNDERSCORES | CVT_LOWER_CASE_IDENTIFIERS |
@@ -793,6 +828,7 @@ ACPI_CONVERSION_TABLE       LinuxConversionTable = {
     LinuxConditionalIdentifiers,
     NULL,
     AcpiIdentifiers,
+    NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_TRIM_LINES | CVT_MIXED_CASE_TO_UNDERSCORES |
      CVT_LOWER_CASE_IDENTIFIERS | CVT_TRIM_WHITESPACE |
@@ -818,11 +854,13 @@ ACPI_CONVERSION_TABLE       CleanupConversionTable = {
     NULL,
     NULL,
     NULL,
+    NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_CHECK_BRACES | CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
 
     /* C header files */
 
+    NULL,
     NULL,
     NULL,
     NULL,
@@ -846,11 +884,13 @@ ACPI_CONVERSION_TABLE       StatsConversionTable = {
     NULL,
     NULL,
     NULL,
+    NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_COUNT_SHORTMULTILINE_COMMENTS),
 
     /* C header files */
 
+    NULL,
     NULL,
     NULL,
     NULL,
@@ -880,11 +920,13 @@ ACPI_CONVERSION_TABLE       LicenseConversionTable = {
     NULL,
     NULL,
     NULL,
+    NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_COUNT_SHORTMULTILINE_COMMENTS),
 
     /* C header files */
 
+    NULL,
     NULL,
     NULL,
     NULL,
@@ -969,6 +1011,7 @@ ACPI_CONVERSION_TABLE       CustomConversionTable = {
     NULL,
     NULL,
     NULL,
+    NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
 
@@ -979,6 +1022,44 @@ ACPI_CONVERSION_TABLE       CustomConversionTable = {
     NULL,
     NULL,
     NULL,
+    NULL,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
+     CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
+};
+
+
+/******************************************************************************
+ *
+ * Indentation result fixup table
+ *
+ ******************************************************************************/
+
+ACPI_CONVERSION_TABLE       IndentConversionTable = {
+
+    NULL,
+    FLG_NO_CARRIAGE_RETURNS,
+
+    NULL,
+
+    /* C source files */
+
+    LinuxSpecialStrings,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    LinuxSpecialMacros,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
+     CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
+
+    /* C header files */
+
+    LinuxSpecialStrings,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    LinuxSpecialMacros,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
 };

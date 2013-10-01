@@ -16,6 +16,8 @@ ACPISRC=$TOOLDIR/acpisrc
 
 linux_dirs()
 {
+	local dirs
+
 	dirs="\
 		drivers/acpi/acpica \
 		include/acpi \
@@ -26,6 +28,8 @@ linux_dirs()
 
 acpica_privs()
 {
+	local incs
+
 	incs="\
 		accommon.h \
 		acdebug.h acdispat.h \
@@ -49,6 +53,8 @@ acpica_privs()
 
 acpica_drivers_paths()
 {
+	local paths incs inc
+
 	paths="\
 		components/dispatcher
 		components/events
@@ -69,6 +75,8 @@ acpica_drivers_paths()
 
 acpica_exclude_paths()
 {
+	local paths
+
 	paths="\
 		include/acpi/acdisasm.h
 		include/acpi/acapps.h
@@ -95,12 +103,16 @@ fulldir()
 
 getdir()
 {
+	local lpath
+
 	lpath=`dirname $1`
 	fulldir $lpath
 }
 
 getfile()
 {
+	local d f
+
 	d=`getdir $1`
 	f=`basename $1`
 	echo $d/$f
@@ -108,6 +120,8 @@ getfile()
 
 identify_bits()
 {
+	local arch no64
+
 	arch=`uname -m`
 	no64=`echo ${arch%64}`
 
@@ -120,6 +134,8 @@ identify_bits()
 
 make_tool()
 {
+	local srcdir acpi_tool tooldir bits
+
 	srcdir=$1
 	acpi_tool=$2
 
@@ -138,6 +154,8 @@ make_tool()
 
 clean_tool()
 {
+	local srcdir acpi_tool tooldir bits
+
 	srcdir=$1
 	acpi_tool=$2
 
@@ -169,23 +187,48 @@ make_acpisrc()
 	make_tool $1 acpisrc
 }
 
+lindent_single()
+{
+	local acpi_types t indent_flags
+
+	acpi_types="\
+		u8 \
+		u16 \
+		u32 \
+		u64 \
+		acpi_integer \
+		acpi_predefined_data \
+		acpi_operand_object \
+		acpi_event_status \
+	"
+
+	indent_flags="-npro -kr -i8 -ts8 -sob -l80 -ss -ncs -il0"
+	for t in $acpi_types; do
+		indent_flags="$indent_flags -T $t"
+	done
+
+	dos2unix $1 > /dev/null 2>&1
+	indent $indent_flags $1
+}
+
 lindent()
 {
+	local files f
+
 	(
 		cd $1
-		find . -name "*.[ch]" | xargs indent \
-			-npro -kr -i8 -ts8 -sob -l80 -ss -ncs -il0 \
-			-T u8 -T u16 -T u32 -T u64 \
-			-T acpi_integer \
-			-T acpi_predefined_data \
-			-T acpi_operand_object \
-			-T acpi_event_status
+		files=`find . -name "*.[ch]" | cut -c3-`
+		for f in $files; do
+			lindent_single $f
+		done
 		find . -name "*~" | xargs rm -f
 	)
 }
 
 copy_linux_hierarchy()
 {
+	local from to dirs dir
+
 	from=$1
 	to=$2
 
@@ -201,6 +244,11 @@ copy_linux_hierarchy()
 
 linuxize_hierarchy_ref()
 {
+	local linux acpica to
+	local all_files
+	local t n d f
+	local private_includes inc
+
 	linux=$1
 	acpica=$2
 	to=$3
@@ -213,9 +261,9 @@ linuxize_hierarchy_ref()
 	# (native ACPICA and Linux ACPICA) match
 	#
 
-	ALL_FILES=`find $linux`
+	all_files=`find $linux`
 
-	for t in $ALL_FILES ; do
+	for t in $all_files ; do
 		if [ -f $t ] ; then
 			n=${t#${linux}/}
 			d=$to/`dirname $n`
@@ -244,6 +292,8 @@ linuxize_hierarchy_ref()
 
 linuxize_hierarchy_noref()
 {
+	local repo_linux paths path
+
 	repo_linux=$1
 
 	(
