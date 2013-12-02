@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # NAME:
 #         linuxize.sh - create linuxized ACPICA source
@@ -39,7 +39,7 @@ if [ -z "$1" ] ; then
 fi
 
 SCRIPT=`(cd \`dirname $0\`; pwd)`
-source $SCRIPT/libacpica.sh
+. $SCRIPT/libacpica.sh
 
 ACPICADIR=`getdir $1`
 ACPICAFILE=`getfile $1`

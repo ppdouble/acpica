@@ -169,7 +169,7 @@ typedef void* (*PTHREAD_CALLBACK) (void *);
 #endif
 
 #ifdef ACPI_EXEC_APP
-#include <termio.h>
+#include <termios.h>
 
 struct termios              OriginalTermAttributes;
 

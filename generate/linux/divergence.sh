@@ -39,7 +39,7 @@ done
 shift $(($OPTIND - 1))
 
 SCRIPT=`(cd \`dirname $0\`; pwd)`
-source $SCRIPT/libacpica.sh
+. $SCRIPT/libacpica.sh
 
 ACPICA_TMP=$CURDIR/acpica-tmp
 LINUX_ACPICA=$CURDIR/linux-acpica
@@ -79,7 +79,7 @@ linuxize_hierarchy_ref $LINUX_ACPICA $SRCDIR $ACPICA_TMP
 #
 # Linuxize the ACPICA source
 #
-echo "[divergence.sh] Converting format (acpisrc)..."
+echo "[divergence.sh] Converting format (acpisrc -l)..."
 rm -rf $ACPICA_LINUXIZED
 $ACPISRC -ldqy $ACPICA_TMP $ACPICA_LINUXIZED > /dev/null
 
@@ -88,6 +88,9 @@ $ACPISRC -ldqy $ACPICA_TMP $ACPICA_LINUXIZED > /dev/null
 #
 echo "[divergence.sh] Converting format (lindent-acpica)..."
 lindent $ACPICA_LINUXIZED
+
+echo "[divergence.sh] Converting format (acpisrc -i)..."
+$ACPISRC -idqy $ACPICA_LINUXIZED $ACPICA_LINUXIZED > /dev/null
 
 if [ "x$LINDENT_DIR" = "xmultiple" ] ; then
 	echo "[divergence.sh] Converting format (lindent-linux)..."

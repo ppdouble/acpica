@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # NAME:
 #         gen-patch.sh - extract linuxized patches from the ACPICA git
@@ -44,7 +44,7 @@ after=`git log -1 -c $1 --format=%H | cut -c1-8`
 before=`git log -1 -c $1^1 --format=%H | cut -c1-8`
 
 SCRIPT=`(cd \`dirname $0\`; pwd)`
-source $SCRIPT/libacpica.sh
+. $SCRIPT/libacpica.sh
 
 GP_acpica_repo=$CURDIR/acpica.repo
 GP_linux_before=$CURDIR/linux.before

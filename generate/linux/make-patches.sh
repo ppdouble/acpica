@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # NAME:
 #         make-patches.sh - extract a set of linuxized patches from the
@@ -34,7 +34,7 @@ usage()
 }
 
 SCRIPT=`(cd \`dirname $0\`; pwd)`
-source $SCRIPT/libacpica.sh
+. $SCRIPT/libacpica.sh
 
 ACPICA_DIR=$CURDIR/patches.acpica.$RELEASE
 LINUX_DIR=$CURDIR/patches.linux.$RELEASE
