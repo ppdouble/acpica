@@ -132,16 +132,6 @@
 #define _COMPONENT          ACPI_CA_DEBUGGER
         ACPI_MODULE_NAME    ("dbfileio")
 
-/*
- * NOTE: this is here for lack of a better place. It is used in all
- * flavors of the debugger, need LCD file
- */
-#ifdef ACPI_APPLICATION
-#include <stdio.h>
-FILE                        *AcpiGbl_DebugFile = NULL;
-#endif
-
-
 #ifdef ACPI_DEBUGGER
 
 /* Local prototypes */
@@ -555,6 +545,7 @@ AcpiDbReadTableFromFile (
     ACPI_TABLE_HEADER       **Table)
 {
     FILE                    *File;
+    UINT32                  FileSize;
     UINT32                  TableLength;
     ACPI_STATUS             Status;
 
@@ -568,9 +559,17 @@ AcpiDbReadTableFromFile (
         return (AE_ERROR);
     }
 
+    /* Get the file size */
+
+    fseek (File, 0, SEEK_END);
+    FileSize = (UINT32) ftell (File);
+    fseek (File, 0, SEEK_SET);
+
     /* Get the entire file */
 
-    fprintf (stderr, "Loading Acpi table from file %s\n", Filename);
+    fprintf (stderr, "Loading Acpi table from file %10s - Length %.8u (%06X)\n",
+        Filename, FileSize, FileSize);
+
     Status = AcpiDbReadTable (File, Table, &TableLength);
     fclose(File);
 

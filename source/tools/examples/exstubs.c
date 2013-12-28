@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- * Module Name: anmain - Main routine for the AcpiNames utility
+ * Module Name: exstubs - Stub routines for the Example program
  *
  *****************************************************************************/
 
@@ -113,241 +113,299 @@
  *
  *****************************************************************************/
 
-#include "acpinames.h"
+#include "examples.h"
 
-#define _COMPONENT          ACPI_TOOLS
-        ACPI_MODULE_NAME    ("anmain")
+#include <acutils.h>
+#include <acevents.h>
+#include <acdispat.h>
 
-
-extern ACPI_TABLE_DESC  Tables[];
-
-static AE_TABLE_DESC    *AeTableListHead = NULL;
-
-
-#define AN_UTILITY_NAME             "ACPI Namespace Dump Utility"
-#define AN_SUPPORTED_OPTIONS        "?hv"
+#define _COMPONENT          ACPI_EXAMPLE
+        ACPI_MODULE_NAME    ("exstubs")
 
 
 /******************************************************************************
  *
- * FUNCTION:    usage
- *
- * PARAMETERS:  None
- *
- * RETURN:      None
- *
- * DESCRIPTION: Print a usage message
+ * DESCRIPTION: Stubs used to facilitate linkage of the example program
  *
  *****************************************************************************/
 
-static void
-usage (
+
+/* Utilities */
+
+void
+AcpiUtSubsystemShutdown (
     void)
 {
+}
 
-    ACPI_USAGE_HEADER ("AcpiNames [options] AMLfile");
-    ACPI_OPTION ("-?",                  "Display this message");
-    ACPI_OPTION ("-v",                  "Display version information");
+ACPI_STATUS
+AcpiUtExecute_STA (
+    ACPI_NAMESPACE_NODE     *DeviceNode,
+    UINT32                  *StatusFlags)
+{
+    return (AE_NOT_IMPLEMENTED);
+}
+
+ACPI_STATUS
+AcpiUtExecute_HID (
+    ACPI_NAMESPACE_NODE     *DeviceNode,
+    ACPI_PNP_DEVICE_ID      **ReturnId)
+{
+    return (AE_NOT_IMPLEMENTED);
+}
+
+ACPI_STATUS
+AcpiUtExecute_CID (
+    ACPI_NAMESPACE_NODE     *DeviceNode,
+    ACPI_PNP_DEVICE_ID_LIST **ReturnCidList)
+{
+    return (AE_NOT_IMPLEMENTED);
+}
+
+ACPI_STATUS
+AcpiUtExecute_UID (
+    ACPI_NAMESPACE_NODE     *DeviceNode,
+    ACPI_PNP_DEVICE_ID      **ReturnId)
+{
+    return (AE_NOT_IMPLEMENTED);
+}
+
+ACPI_STATUS
+AcpiUtExecute_SUB (
+    ACPI_NAMESPACE_NODE     *DeviceNode,
+    ACPI_PNP_DEVICE_ID      **ReturnId)
+{
+    return (AE_NOT_IMPLEMENTED);
+}
+
+ACPI_STATUS
+AcpiUtExecutePowerMethods (
+    ACPI_NAMESPACE_NODE     *DeviceNode,
+    const char              **MethodNames,
+    UINT8                   MethodCount,
+    UINT8                   *OutValues)
+{
+    return (AE_NOT_IMPLEMENTED);
+}
+
+ACPI_STATUS
+AcpiUtEvaluateNumericObject (
+    char                    *ObjectName,
+    ACPI_NAMESPACE_NODE     *DeviceNode,
+    UINT64                  *Value)
+{
+    return (AE_NOT_IMPLEMENTED);
+}
+
+ACPI_STATUS
+AcpiUtGetResourceEndTag (
+    ACPI_OPERAND_OBJECT     *ObjDesc,
+    UINT8                   **EndTag)
+{
+    return (AE_OK);
 }
 
 
-/******************************************************************************
- *
- * FUNCTION:    NsDumpEntireNamespace
- *
- * PARAMETERS:  AmlFilename         - Filename for DSDT or SSDT AML table
- *
- * RETURN:      Status (pass/fail)
- *
- * DESCRIPTION: Build an ACPI namespace for the input AML table, and dump the
- *              formatted namespace contents.
- *
- *****************************************************************************/
+/* Hardware manager */
 
-static int
-NsDumpEntireNamespace (
-    char                    *AmlFilename)
+UINT32
+AcpiHwGetMode (
+    void)
 {
-    ACPI_STATUS             Status;
-    ACPI_TABLE_HEADER       *Table = NULL;
-    UINT32                  TableCount = 0;
-    AE_TABLE_DESC           *TableDesc;
-    ACPI_HANDLE             Handle;
-
-
-    /* Open the binary AML file and read the entire table */
-
-    Status = AcpiDbReadTableFromFile (AmlFilename, &Table);
-    if (ACPI_FAILURE (Status))
-    {
-        printf ("**** Could not get input table %s, %s\n", AmlFilename,
-            AcpiFormatException (Status));
-        return (-1);
-    }
-
-    /* Table must be a DSDT. SSDTs are not currently supported */
-
-    if (!ACPI_COMPARE_NAME (Table->Signature, ACPI_SIG_DSDT))
-    {
-        printf ("**** Input table signature is [%4.4s], must be [DSDT]\n",
-            Table->Signature);
-        return (-1);
-    }
-
-    /*
-     * Allocate and link a table descriptor (allows for future expansion to
-     * multiple input files)
-     */
-    TableDesc = AcpiOsAllocate (sizeof (AE_TABLE_DESC));
-    TableDesc->Table = Table;
-    TableDesc->Next = AeTableListHead;
-    AeTableListHead = TableDesc;
-
-    TableCount++;
-
-    /*
-     * Build a local XSDT with all tables. Normally, here is where the
-     * RSDP search is performed to find the ACPI tables
-     */
-    Status = AeBuildLocalTables (TableCount, AeTableListHead);
-    if (ACPI_FAILURE (Status))
-    {
-        return (-1);
-    }
-
-    /* Initialize table manager, get XSDT */
-
-    Status = AcpiInitializeTables (Tables, ACPI_MAX_INIT_TABLES, TRUE);
-    if (ACPI_FAILURE (Status))
-    {
-        printf ("**** Could not initialize ACPI table manager, %s\n",
-            AcpiFormatException (Status));
-        return (-1);
-    }
-
-    /* Reallocate root table to dynamic memory */
-
-    Status = AcpiReallocateRootTable ();
-    if (ACPI_FAILURE (Status))
-    {
-        printf ("**** Could not reallocate root table, %s\n",
-            AcpiFormatException (Status));
-        return (-1);
-    }
-
-    /* Load the ACPI namespace */
-
-    Status = AcpiLoadTables ();
-    if (ACPI_FAILURE (Status))
-    {
-        printf ("**** Could not load ACPI tables, %s\n",
-            AcpiFormatException (Status));
-        return (-1);
-    }
-
-    /*
-     * Enable ACPICA. These calls don't do much for this
-     * utility, since we only dump the namespace. There is no
-     * hardware or event manager code underneath.
-     */
-    Status = AcpiEnableSubsystem (
-                ACPI_NO_ACPI_ENABLE |
-                ACPI_NO_ADDRESS_SPACE_INIT |
-                ACPI_NO_EVENT_INIT |
-                ACPI_NO_HANDLER_INIT);
-    if (ACPI_FAILURE (Status))
-    {
-        printf ("**** Could not EnableSubsystem, %s\n",
-            AcpiFormatException (Status));
-        return (-1);
-    }
-
-    Status = AcpiInitializeObjects (
-                ACPI_NO_ADDRESS_SPACE_INIT |
-                ACPI_NO_DEVICE_INIT |
-                ACPI_NO_EVENT_INIT);
-    if (ACPI_FAILURE (Status))
-    {
-        printf ("**** Could not InitializeObjects, %s\n",
-            AcpiFormatException (Status));
-        return (-1);
-    }
-
-    /*
-     * Perform a namespace walk to dump the contents
-     */
-    AcpiOsPrintf ("\nACPI Namespace:\n");
-
-    AcpiNsDumpObjects (ACPI_TYPE_ANY, ACPI_DISPLAY_SUMMARY, ACPI_UINT32_MAX,
-        ACPI_OWNER_ID_MAX, AcpiGbl_RootNode);
-
-
-    /* Example: get a handle to the _GPE scope */
-
-    Status = AcpiGetHandle (NULL, "\\_GPE", &Handle);
-    AE_CHECK_OK (AcpiGetHandle, Status);
-
     return (0);
 }
 
-
-/******************************************************************************
- *
- * FUNCTION:    main
- *
- * PARAMETERS:  argc, argv
- *
- * RETURN:      Status (pass/fail)
- *
- * DESCRIPTION: Main routine for NsDump utility
- *
- *****************************************************************************/
-
-int ACPI_SYSTEM_XFACE
-main (
-    int                     argc,
-    char                    **argv)
+ACPI_STATUS
+AcpiHwReadPort (
+    ACPI_IO_ADDRESS         Address,
+    UINT32                  *Value,
+    UINT32                  Width)
 {
-    ACPI_STATUS             Status;
-    int                     j;
+    return (AE_OK);
+}
+
+ACPI_STATUS
+AcpiHwWritePort (
+    ACPI_IO_ADDRESS         Address,
+    UINT32                  Value,
+    UINT32                  Width)
+{
+    return (AE_OK);
+}
 
 
-    ACPI_DEBUG_INITIALIZE (); /* For debug version only */
-    printf (ACPI_COMMON_SIGNON (AN_UTILITY_NAME));
+/* Event manager */
 
-    if (argc < 2)
-    {
-        usage ();
-        return (0);
-    }
+ACPI_STATUS
+AcpiInstallNotifyHandler (
+    ACPI_HANDLE             Device,
+    UINT32                  HandlerType,
+    ACPI_NOTIFY_HANDLER     Handler,
+    void                    *Context)
+{
+    return (AE_OK);
+}
 
-    /* Init globals and ACPICA */
+ACPI_STATUS
+AcpiEvInstallXruptHandlers (
+    void)
+{
+    return (AE_OK);
+}
 
-    AcpiDbgLevel = ACPI_NORMAL_DEFAULT | ACPI_LV_TABLES;
-    AcpiDbgLayer = 0xFFFFFFFF;
+ACPI_STATUS
+AcpiEvInitializeEvents (
+    void)
+{
+    return (AE_OK);
+}
 
-    Status = AcpiInitializeSubsystem ();
-    AE_CHECK_OK (AcpiInitializeSubsystem, Status);
+ACPI_STATUS
+AcpiEvInstallRegionHandlers (
+    void)
+{
+    return (AE_OK);
+}
 
-    /* Get the command line options */
+ACPI_STATUS
+AcpiEvInitializeOpRegions (
+    void)
+{
+    return (AE_OK);
+}
 
-    while ((j = AcpiGetopt (argc, argv, AN_SUPPORTED_OPTIONS)) != EOF) switch(j)
-    {
-    case 'v': /* -v: (Version): signon already emitted, just exit */
+ACPI_STATUS
+AcpiEvInitializeRegion (
+    ACPI_OPERAND_OBJECT     *RegionObj,
+    BOOLEAN                 AcpiNsLocked)
+{
+    return (AE_OK);
+}
 
-        return (0);
+#if (!ACPI_REDUCED_HARDWARE)
+ACPI_STATUS
+AcpiEvDeleteGpeBlock (
+    ACPI_GPE_BLOCK_INFO     *GpeBlock)
+{
+    return (AE_OK);
+}
 
-    case '?':
-    case 'h':
-    default:
+ACPI_STATUS
+AcpiEnable (
+    void)
+{
+    return (AE_OK);
+}
+#endif /* !ACPI_REDUCED_HARDWARE */
 
-        usage();
-        return (0);
-    }
+void
+AcpiEvUpdateGpes (
+    ACPI_OWNER_ID           TableOwnerId)
+{
+}
 
-    /*
-     * The next argument is the filename for the DSDT or SSDT.
-     * Open the file, build namespace and dump it.
-     */
-    return (NsDumpEntireNamespace (argv[AcpiGbl_Optind]));
+ACPI_STATUS
+AcpiEvAddressSpaceDispatch (
+    ACPI_OPERAND_OBJECT     *RegionObj,
+    ACPI_OPERAND_OBJECT     *FieldObj,
+    UINT32                  Function,
+    UINT32                  RegionOffset,
+    UINT32                  BitWidth,
+    UINT64                  *Value)
+{
+    return (AE_OK);
+}
+
+ACPI_STATUS
+AcpiEvAcquireGlobalLock (
+    UINT16                  Timeout)
+{
+    return (AE_OK);
+}
+
+ACPI_STATUS
+AcpiEvReleaseGlobalLock (
+    void)
+{
+    return (AE_OK);
+}
+
+ACPI_STATUS
+AcpiEvQueueNotifyRequest (
+    ACPI_NAMESPACE_NODE     *Node,
+    UINT32                  NotifyValue)
+{
+    return (AE_OK);
+}
+
+BOOLEAN
+AcpiEvIsNotifyObject (
+    ACPI_NAMESPACE_NODE     *Node)
+{
+    return (TRUE);
+}
+
+
+/* Namespace manager */
+
+ACPI_STATUS
+AcpiNsCheckReturnValue (
+    ACPI_NAMESPACE_NODE         *Node,
+    ACPI_EVALUATE_INFO          *Info,
+    UINT32                      UserParamCount,
+    ACPI_STATUS                 ReturnStatus,
+    ACPI_OPERAND_OBJECT         **ReturnObjectPtr)
+{
+    return (AE_OK);
+}
+
+void
+AcpiNsCheckArgumentTypes (
+    ACPI_EVALUATE_INFO          *Info)
+{
+    return;
+}
+
+void
+AcpiNsCheckArgumentCount (
+    char                        *Pathname,
+    ACPI_NAMESPACE_NODE         *Node,
+    UINT32                      UserParamCount,
+    const ACPI_PREDEFINED_INFO  *Predefined)
+{
+    return;
+}
+
+void
+AcpiNsCheckAcpiCompliance (
+    char                        *Pathname,
+    ACPI_NAMESPACE_NODE         *Node,
+    const ACPI_PREDEFINED_INFO  *Predefined)
+{
+    return;
+}
+
+const ACPI_PREDEFINED_INFO *
+AcpiUtMatchPredefinedMethod (
+    char                        *Name)
+{
+    return (NULL);
+}
+
+/* OSL interfaces */
+
+ACPI_THREAD_ID
+AcpiOsGetThreadId (
+    void)
+{
+    return (1);
+}
+
+ACPI_STATUS
+AcpiOsExecute (
+    ACPI_EXECUTE_TYPE       Type,
+    ACPI_OSD_EXEC_CALLBACK  Function,
+    void                    *Context)
+{
+    return (AE_SUPPORT);
 }
