@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -457,11 +457,7 @@ ApDumpTableByName (
 
     /* To be friendly, handle tables whose signatures do not match the name */
 
-    if (ACPI_COMPARE_NAME (LocalSignature, AP_DUMP_SIG_RSDP))
-    {
-        strcpy (LocalSignature, AP_DUMP_SIG_RSDP);
-    }
-    else if (ACPI_COMPARE_NAME (LocalSignature, "FADT"))
+    if (ACPI_COMPARE_NAME (LocalSignature, "FADT"))
     {
         strcpy (LocalSignature, ACPI_SIG_FADT);
     }

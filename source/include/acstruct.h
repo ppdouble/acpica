@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -115,6 +115,9 @@
 
 #ifndef __ACSTRUCT_H__
 #define __ACSTRUCT_H__
+
+
+#pragma pack(push) /* Set default struct packing */
 
 /* acpisrc:StructDefs -- for acpisrc conversion */
 
@@ -338,5 +341,7 @@ typedef struct acpi_walk_info
 
 #define ACPI_DISPLAY_SHORT          (UINT8) 2
 
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif

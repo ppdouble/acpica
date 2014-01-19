@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -404,6 +404,17 @@ AsConvertFile (
         MacroTable          = ConversionTable->HeaderMacroTable;
         StructTable         = ConversionTable->HeaderStructTable;
         SpecialMacroTable   = ConversionTable->HeaderSpecialMacroTable;
+        break;
+
+    case FILE_TYPE_PATCH:
+
+        Functions           = ConversionTable->PatchFunctions;
+        StringTable         = ConversionTable->PatchStringTable;
+        LineTable           = ConversionTable->PatchLineTable;
+        ConditionalTable    = ConversionTable->PatchConditionalTable;
+        MacroTable          = ConversionTable->PatchMacroTable;
+        StructTable         = ConversionTable->PatchStructTable;
+        SpecialMacroTable   = ConversionTable->PatchSpecialMacroTable;
         break;
 
     default:

@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -162,7 +162,7 @@ ACPI_STRING_TABLE           StandardDataTypes[] = {
 
 char                        DualLicenseHeader[] =
 "/*\n"
-" * Copyright (C) 2000 - 2013, Intel Corp.\n"
+" * Copyright (C) 2000 - 2014, Intel Corp.\n"
 " * All rights reserved.\n"
 " *\n"
 " * Redistribution and use in source and binary forms, with or without\n"
@@ -833,6 +833,17 @@ ACPI_CONVERSION_TABLE       LinuxConversionTable = {
      CVT_TRIM_LINES | CVT_MIXED_CASE_TO_UNDERSCORES |
      CVT_LOWER_CASE_IDENTIFIERS | CVT_TRIM_WHITESPACE |
      CVT_REMOVE_EMPTY_BLOCKS| CVT_REDUCE_TYPEDEFS | CVT_SPACES_TO_TABS8),
+
+    /* Patch files */
+
+    LinuxDataTypes,
+    NULL,
+    NULL,
+    NULL,
+    AcpiIdentifiers,
+    NULL,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
+     CVT_MIXED_CASE_TO_UNDERSCORES),
 };
 
 
@@ -868,6 +879,16 @@ ACPI_CONVERSION_TABLE       CleanupConversionTable = {
     NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
+
+    /* Patch files */
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES),
 };
 
 
@@ -889,6 +910,17 @@ ACPI_CONVERSION_TABLE       StatsConversionTable = {
      CVT_COUNT_SHORTMULTILINE_COMMENTS),
 
     /* C header files */
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
+     CVT_COUNT_SHORTMULTILINE_COMMENTS),
+
+    /* Patch files */
 
     NULL,
     NULL,
@@ -934,6 +966,17 @@ ACPI_CONVERSION_TABLE       LicenseConversionTable = {
     NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_COUNT_SHORTMULTILINE_COMMENTS),
+
+    /* Patch files */
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
+     CVT_COUNT_SHORTMULTILINE_COMMENTS),
 };
 
 
@@ -946,8 +989,8 @@ ACPI_CONVERSION_TABLE       LicenseConversionTable = {
 ACPI_STRING_TABLE           CustomReplacements[] = {
 
 
-    {"(c) 1999 - 2012",     "(c) 1999 - 2013",         REPLACE_WHOLE_WORD}, /* Main ACPICA source */
-    {"(c) 2006 - 2012",     "(c) 2006 - 2013",         REPLACE_WHOLE_WORD}, /* Test suites */
+    {"(c) 1999 - 2013",     "(c) 1999 - 2014",         REPLACE_WHOLE_WORD}, /* Main ACPICA source */
+    {"(c) 2006 - 2013",     "(c) 2006 - 2014",         REPLACE_WHOLE_WORD}, /* Test suites */
 
 #if 0
     {"SUPPORT, ASSISTANCE", "SUPPORT, ASSISTANCE",     REPLACE_WHOLE_WORD}, /* Fix intel header */
@@ -1025,6 +1068,16 @@ ACPI_CONVERSION_TABLE       CustomConversionTable = {
     NULL,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
+
+    /* C header files */
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES),
 };
 
 
@@ -1062,4 +1115,14 @@ ACPI_CONVERSION_TABLE       IndentConversionTable = {
     LinuxSpecialMacros,
     (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES |
      CVT_TRIM_LINES | CVT_TRIM_WHITESPACE),
+
+    /* C header files */
+
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    NULL,
+    (CVT_COUNT_TABS | CVT_COUNT_NON_ANSI_COMMENTS | CVT_COUNT_LINES),
 };

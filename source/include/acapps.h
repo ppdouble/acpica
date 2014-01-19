@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -117,6 +117,8 @@
 #define _ACAPPS
 
 
+#pragma pack(push) /* Set default struct packing */
+
 #ifdef _MSC_VER                 /* disable some level-4 warnings */
 #pragma warning(disable:4100)   /* warning C4100: unreferenced formal parameter */
 #endif
@@ -124,7 +126,7 @@
 /* Common info for tool signons */
 
 #define ACPICA_NAME                 "Intel ACPI Component Architecture"
-#define ACPICA_COPYRIGHT            "Copyright (c) 2000 - 2013 Intel Corporation"
+#define ACPICA_COPYRIGHT            "Copyright (c) 2000 - 2014 Intel Corporation"
 
 #if ACPI_MACHINE_WIDTH == 64
 #define ACPI_WIDTH          "-64"
@@ -292,5 +294,7 @@ AdWriteTable (
     char                    *TableName,
     char                    *OemTableId);
 #endif
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* _ACAPPS */

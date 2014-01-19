@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACMACROS_H__
 #define __ACMACROS_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /*
  * Extract data using a pointer. Any more than a byte and we
@@ -504,5 +506,7 @@
 
 #define ACPI_IS_OCTAL_DIGIT(d)              (((char)(d) >= '0') && ((char)(d) <= '7'))
 
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* ACMACROS_H */

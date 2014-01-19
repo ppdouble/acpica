@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -161,10 +161,6 @@ typedef struct ap_dump_action
     UINT32                  ToBeDone;
 
 } AP_DUMP_ACTION;
-
-/* Local RSDP signature (Not the same as the actual signature which is "RSD PTR ") */
-
-#define AP_DUMP_SIG_RSDP            "RSDP"
 
 #define AP_MAX_ACTIONS              32
 

@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -117,6 +117,8 @@
 #ifndef __ACPARSER_H__
 #define __ACPARSER_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 #define OP_HAS_RETURN_VALUE             1
 
@@ -424,5 +426,7 @@ void
 AcpiPsShow (
     ACPI_PARSE_OBJECT       *op);
 
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACPARSER_H__ */

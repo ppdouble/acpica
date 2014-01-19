@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -119,12 +119,14 @@
 
 /* Current ACPICA subsystem version in YYYYMMDD format */
 
-#define ACPI_CA_VERSION                 0x20131218
+#define ACPI_CA_VERSION                 0x20140114
 
 #include "acconfig.h"
 #include "actypes.h"
 #include "actbl.h"
 #include "acbuffer.h"
+
+#pragma pack(push) /* Set default struct packing */
 
 /*
  * Globals that are publically available
@@ -902,5 +904,7 @@ AcpiDebugPrintRaw (
     const char              *Format,
     ...);
 #endif
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACXFACE_H__ */

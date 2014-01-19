@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -117,6 +117,8 @@
 #ifndef _ACDISPAT_H_
 #define _ACDISPAT_H_
 
+
+#pragma pack(push) /* Set default struct packing */
 
 #define NAMEOF_LOCAL_NTE    "__L0"
 #define NAMEOF_ARG_NTE      "__A0"
@@ -531,5 +533,7 @@ ACPI_STATUS
 AcpiDsResultPush (
     ACPI_OPERAND_OBJECT     *Object,
     ACPI_WALK_STATE         *WalkState);
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* _ACDISPAT_H_ */

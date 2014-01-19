@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACEXCEP_H__
 #define __ACEXCEP_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /* This module contains all possible exception codes for ACPI_STATUS */
 
@@ -416,5 +418,7 @@ static const ACPI_EXCEPTION_INFO    AcpiGbl_ExceptionNames_Ctrl[] =
 };
 
 #endif /* EXCEPTION_TABLE */
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACEXCEP_H__ */

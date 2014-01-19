@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACINTERP_H__
 #define __ACINTERP_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 #define ACPI_WALK_OPERANDS          (&(WalkState->Operands [WalkState->NumOperands -1]))
 
@@ -794,5 +796,7 @@ AcpiExDataTableSpaceHandler (
     UINT64                  *Value,
     void                    *HandlerContext,
     void                    *RegionContext);
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __INTERP_H__ */

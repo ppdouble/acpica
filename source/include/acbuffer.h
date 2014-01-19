@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -115,6 +115,9 @@
 
 #ifndef __ACBUFFER_H__
 #define __ACBUFFER_H__
+
+
+#pragma pack(push) /* Set default struct packing */
 
 /*
  * Contains buffer structures for these predefined names:
@@ -314,5 +317,7 @@ typedef struct acpi_pld_info
 #define ACPI_PLD_GET_HORIZ_OFFSET(dword)        ACPI_GET_BITS (dword, 16, ACPI_16BIT_MASK)
 #define ACPI_PLD_SET_HORIZ_OFFSET(dword,value)  ACPI_SET_BITS (dword, 16, ACPI_16BIT_MASK, value)   /* Offset 128+16=144, Len 16 */
 
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* ACBUFFER_H */

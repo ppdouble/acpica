@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -118,6 +118,8 @@
 #ifndef __AMLRESRC_H
 #define __AMLRESRC_H
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /*
  * Resource descriptor tags, as defined in the ACPI specification.
@@ -645,5 +647,8 @@ typedef union aml_resource
     UINT8                                   ByteItem;
 
 } AML_RESOURCE;
+
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif

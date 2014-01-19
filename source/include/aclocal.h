@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACLOCAL_H__
 #define __ACLOCAL_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /* acpisrc:StructDefs -- for acpisrc conversion */
 
@@ -1420,5 +1422,7 @@ typedef struct ah_predefined_name
 #endif
 
 } AH_PREDEFINED_NAME;
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACLOCAL_H__ */

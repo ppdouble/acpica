@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACTBL3_H__
 #define __ACTBL3_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /*******************************************************************************
  *
@@ -804,8 +806,6 @@ typedef struct acpi_tpm2_control
 } ACPI_TPM2_CONTROL;
 
 
-/* Reset to default packing */
-
-#pragma pack()
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACTBL3_H__ */

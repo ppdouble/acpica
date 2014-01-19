@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -754,7 +754,7 @@ OslTableInitialize (
     {
         /* Add mandatory tables to global table list first */
 
-        Status = OslAddTableToList (AP_DUMP_SIG_RSDP, 0);
+        Status = OslAddTableToList (ACPI_RSDP_NAME, 0);
         if (ACPI_FAILURE (Status))
         {
             return (Status);
@@ -938,7 +938,7 @@ OslGetBiosTable (
 
     /* Handle special tables whose addresses are not in RSDT/XSDT */
 
-    if (ACPI_COMPARE_NAME (Signature, AP_DUMP_SIG_RSDP) ||
+    if (ACPI_COMPARE_NAME (Signature, ACPI_RSDP_NAME) ||
         ACPI_COMPARE_NAME (Signature, ACPI_SIG_RSDT) ||
         ACPI_COMPARE_NAME (Signature, ACPI_SIG_XSDT) ||
         ACPI_COMPARE_NAME (Signature, ACPI_SIG_DSDT) ||

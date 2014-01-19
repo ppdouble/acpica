@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACTBL_H__
 #define __ACTBL_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /*******************************************************************************
  *
@@ -511,5 +513,7 @@ typedef struct acpi_table_desc
 #define ACPI_FADT_V2_SIZE       (UINT32) (ACPI_FADT_OFFSET (Reserved4[0]) + 3)
 #define ACPI_FADT_V3_SIZE       (UINT32) (ACPI_FADT_OFFSET (SleepControl))
 #define ACPI_FADT_V5_SIZE       (UINT32) (sizeof (ACPI_TABLE_FADT))
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACTBL_H__ */

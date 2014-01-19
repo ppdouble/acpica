@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -134,6 +134,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <signal.h>
+
+#pragma pack(push) /* Set default struct packing */
 
 extern BOOLEAN              AcpiGbl_IgnoreErrors;
 extern UINT8                AcpiGbl_RegionFillValue;
@@ -267,5 +269,8 @@ AeGlobalEventHandler (
     ACPI_HANDLE             GpeDevice,
     UINT32                  EventNumber,
     void                    *Context);
+
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* _AECOMMON */

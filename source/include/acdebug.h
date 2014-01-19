@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACDEBUG_H__
 #define __ACDEBUG_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 #define ACPI_DEBUG_BUFFER_SIZE  0x4000      /* 16K buffer for return objects */
 
@@ -235,6 +237,11 @@ ACPI_HW_DEPENDENT_RETURN_VOID (
 void
 AcpiDbGenerateSci (
     void))
+
+void
+AcpiDbExecuteTest (
+    char                    *TypeArg);
+
 
 /*
  * dbconvert - miscellaneous conversion routines
@@ -532,5 +539,7 @@ void
 AcpiDbUint32ToHexString (
     UINT32                  Value,
     char                    *Buffer);
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif  /* __ACDEBUG_H__ */

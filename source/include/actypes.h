@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -115,6 +115,8 @@
 
 #ifndef __ACTYPES_H__
 #define __ACTYPES_H__
+
+#pragma pack(push) /* Set default struct packing */
 
 /* acpisrc:StructDefs -- for acpisrc conversion */
 
@@ -1386,5 +1388,7 @@ typedef struct acpi_memory_list
 #define ACPI_OSI_WIN_7                  0x0B
 #define ACPI_OSI_WIN_8                  0x0C
 
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACTYPES_H__ */

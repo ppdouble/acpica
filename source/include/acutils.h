@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -117,12 +117,14 @@
 #define _ACUTILS_H
 
 
+#pragma pack(push) /* Set default struct packing */
+
 extern const UINT8                      AcpiGbl_ResourceAmlSizes[];
 extern const UINT8                      AcpiGbl_ResourceAmlSerialBusSizes[];
 
 /* Strings used by the disassembler and debugger resource dump routines */
 
-#if defined(ACPI_DISASSEMBLER) || defined (ACPI_DEBUGGER)
+#if defined(ACPI_DEBUG_OUTPUT) || defined (ACPI_DISASSEMBLER) || defined (ACPI_DEBUGGER)
 
 extern const char                       *AcpiGbl_BmDecode[];
 extern const char                       *AcpiGbl_ConfigDecode[];
@@ -1170,5 +1172,8 @@ AcpiUtMethodError (
     ACPI_NAMESPACE_NODE     *Node,
     const char              *Path,
     ACPI_STATUS             LookupStatus);
+
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* _ACUTILS_H */

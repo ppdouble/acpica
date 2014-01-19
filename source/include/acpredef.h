@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -116,6 +116,8 @@
 #ifndef __ACPREDEF_H__
 #define __ACPREDEF_H__
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /******************************************************************************
  *
@@ -1132,5 +1134,7 @@ static const ACPI_PREDEFINED_INFO      AcpiGbl_ScopeNames[] = {
 #else
 extern const ACPI_PREDEFINED_INFO      AcpiGbl_ResourceNames[];
 #endif
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif

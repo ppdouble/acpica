@@ -10,7 +10,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -121,6 +121,8 @@
 #include "platform/acenv.h"
 #include "actypes.h"
 
+
+#pragma pack(push) /* Set default struct packing */
 
 /* Types for AcpiOsExecute */
 
@@ -622,5 +624,7 @@ AcpiOsCloseDirectory (
     void                    *DirHandle);
 #endif
 
+
+#pragma pack(pop) /* Restore original struct packing */
 
 #endif /* __ACPIOSXF_H__ */

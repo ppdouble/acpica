@@ -8,7 +8,7 @@
  *
  * 1. Copyright Notice
  *
- * Some or all of this work - Copyright (c) 1999 - 2013, Intel Corp.
+ * Some or all of this work - Copyright (c) 1999 - 2014, Intel Corp.
  * All rights reserved.
  *
  * 2. License
@@ -201,7 +201,7 @@ ApWriteToBinaryFile (
 
     if (ACPI_VALIDATE_RSDP_SIG (Table->Signature))
     {
-        ACPI_MOVE_NAME (Filename, AP_DUMP_SIG_RSDP);
+        ACPI_MOVE_NAME (Filename, ACPI_RSDP_NAME);
     }
     else
     {
