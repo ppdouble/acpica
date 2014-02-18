@@ -114,39 +114,10 @@
  *****************************************************************************/
 
 #include "aslcompiler.h"
+#include "acapps.h"
 
 #define _COMPONENT          ACPI_COMPILER
         ACPI_MODULE_NAME    ("aslfileio")
-
-
-/*******************************************************************************
- *
- * FUNCTION:    AslAbort
- *
- * PARAMETERS:  None
- *
- * RETURN:      None
- *
- * DESCRIPTION: Dump the error log and abort the compiler. Used for serious
- *              I/O errors.
- *
- ******************************************************************************/
-
-void
-AslAbort (
-    void)
-{
-
-    AePrintErrorLog (ASL_FILE_STDERR);
-    if (Gbl_DebugFlag)
-    {
-        /* Print error summary to stdout also */
-
-        AePrintErrorLog (ASL_FILE_STDOUT);
-    }
-
-    exit (1);
-}
 
 
 /*******************************************************************************
@@ -219,7 +190,8 @@ FlOpenFile (
  *
  * RETURN:      File Size
  *
- * DESCRIPTION: Get current file size. Uses seek-to-EOF. File must be open.
+ * DESCRIPTION: Get current file size. Uses common seek-to-EOF function.
+ *              File must be open. Aborts compiler on error.
  *
  ******************************************************************************/
 
@@ -227,20 +199,15 @@ UINT32
 FlGetFileSize (
     UINT32                  FileId)
 {
-    FILE                    *fp;
     UINT32                  FileSize;
-    long                    Offset;
 
 
-    fp = Gbl_Files[FileId].Handle;
-    Offset = ftell (fp);
+    FileSize = CmGetFileSize (Gbl_Files[FileId].Handle);
+    if (FileSize == ACPI_UINT32_MAX)
+    {
+        AslAbort();
+    }
 
-    fseek (fp, 0, SEEK_END);
-    FileSize = (UINT32) ftell (fp);
-
-    /* Restore file pointer */
-
-    fseek (fp, Offset, SEEK_SET);
     return (FileSize);
 }
 
