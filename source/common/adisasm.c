@@ -242,7 +242,7 @@ AdInitialize (
     ACPI_STATUS             Status;
 
 
-    /* ACPI CA subsystem initialization */
+    /* ACPICA subsystem initialization */
 
     Status = AcpiOsInitialize ();
     if (ACPI_FAILURE (Status))
@@ -417,7 +417,7 @@ AdAmlDisassemble (
         /* Create/Open a disassembly output file */
 
         DisasmFilename = FlGenerateFilename (Prefix, FILE_SUFFIX_DISASSEMBLY);
-        if (!OutFilename)
+        if (!DisasmFilename)
         {
             fprintf (stderr, "Could not generate output filename\n");
             Status = AE_ERROR;
@@ -604,7 +604,7 @@ Cleanup:
  *
  * RETURN:      None
  *
- * DESCRIPTION: Create the disassembler header, including ACPI CA signon with
+ * DESCRIPTION: Create the disassembler header, including ACPICA signon with
  *              current time and date.
  *
  *****************************************************************************/
@@ -636,7 +636,7 @@ AdDisassemblerHeader (
  *
  * RETURN:      None
  *
- * DESCRIPTION: Create the ASL table header, including ACPI CA signon with
+ * DESCRIPTION: Create the ASL table header, including ACPICA signon with
  *              current time and date.
  *
  *****************************************************************************/
@@ -714,8 +714,17 @@ AdCreateTableHeader (
     else
     {
         NewFilename = ACPI_ALLOCATE_ZEROED (9);
-        strncat (NewFilename, Table->Signature, 4);
-        strcat (NewFilename, ".aml");
+        if (NewFilename)
+        {
+            strncat (NewFilename, Table->Signature, 4);
+            strcat (NewFilename, ".aml");
+        }
+    }
+
+    if (!NewFilename)
+    {
+        AcpiOsPrintf (" **** Could not generate AML output filename\n");
+        return;
     }
 
     /* Open the ASL definition block */
