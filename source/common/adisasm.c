@@ -505,9 +505,10 @@ AdAmlDisassemble (
                 "reparsing with new information\n",
                 AcpiDmGetExternalMethodCount ());
 
-            /* Reparse, rebuild namespace. no need to xref namespace */
+            /* Reparse, rebuild namespace */
 
             AcpiPsDeleteParseTree (AcpiGbl_ParseOpRoot);
+            AcpiGbl_ParseOpRoot = NULL;
             AcpiNsDeleteNamespaceSubtree (AcpiGbl_RootNode);
 
             AcpiGbl_RootNode                    = NULL;
@@ -521,6 +522,9 @@ AdAmlDisassemble (
             AcpiGbl_RootNodeStruct.Flags        = 0;
 
             Status = AcpiNsRootInitialize ();
+
+            /* New namespace, add the external definitions first */
+
             AcpiDmAddExternalsToNamespace ();
 
             /* Parse the table again. No need to reload it, however */
@@ -532,6 +536,14 @@ AdAmlDisassemble (
                     AcpiFormatException (Status));
                 goto Cleanup;
             }
+
+            /* Cross reference the namespace again */
+
+            AcpiDmFinishNamespaceLoad (AcpiGbl_ParseOpRoot,
+                AcpiGbl_RootNode, OwnerId);
+
+            AcpiDmCrossReferenceNamespace (AcpiGbl_ParseOpRoot,
+                AcpiGbl_RootNode, OwnerId);
 
             if (AslCompilerdebug)
             {
