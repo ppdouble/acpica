@@ -429,6 +429,7 @@ AdAmlDisassemble (
         {
             fprintf (stderr, "Could not open output file %s\n", DisasmFilename);
             Status = AE_ERROR;
+            ACPI_FREE (DisasmFilename);
             goto Cleanup;
         }
 
@@ -929,7 +930,8 @@ AdParseTable (
     if (LoadTable)
     {
         Status = AcpiTbStoreTable ((ACPI_PHYSICAL_ADDRESS) Table, Table,
-                    Table->Length, ACPI_TABLE_ORIGIN_ALLOCATED, &TableIndex);
+                    Table->Length, ACPI_TABLE_ORIGIN_INTERNAL_VIRTUAL,
+                    &TableIndex);
         if (ACPI_FAILURE (Status))
         {
             return (Status);
@@ -964,9 +966,12 @@ AdParseTable (
         return (AE_OK);
     }
 
-    /* Pass 3: Parse control methods and link their parse trees into the main parse tree */
-
-    fprintf (stderr, "Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)\n");
+    /*
+     * Pass 3: Parse control methods and link their parse trees
+     * into the main parse tree
+     */
+    fprintf (stderr,
+        "Parsing Deferred Opcodes (Methods/Buffers/Packages/Regions)\n");
     Status = AcpiDmParseDeferredOps (AcpiGbl_ParseOpRoot);
     fprintf (stderr, "\n");
 

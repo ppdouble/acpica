@@ -64,6 +64,7 @@ OBJECTS = \
 	$(OBJDIR)/asllookup.o\
 	$(OBJDIR)/aslmain.o\
 	$(OBJDIR)/aslmap.o\
+	$(OBJDIR)/aslmessages.o\
 	$(OBJDIR)/aslmethod.o\
 	$(OBJDIR)/aslnamesp.o\
 	$(OBJDIR)/asloffset.o\
@@ -173,6 +174,7 @@ OBJECTS = \
 	$(OBJDIR)/pstree.o\
 	$(OBJDIR)/psutils.o\
 	$(OBJDIR)/pswalk.o\
+	$(OBJDIR)/tbdata.o\
 	$(OBJDIR)/tbfadt.o\
 	$(OBJDIR)/tbinstal.o\
 	$(OBJDIR)/tbprint.o\

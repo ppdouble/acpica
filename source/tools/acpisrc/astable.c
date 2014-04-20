@@ -709,16 +709,26 @@ ACPI_TYPED_IDENTIFIER_TABLE           AcpiIdentifiers[] = {
     {"PR_MACRO_ARG",                        SRC_TYPE_STRUCT},
     {"PR_OPERATOR_INFO",                    SRC_TYPE_STRUCT},
 
+    /* AcpiDump utility */
+
+    {"AP_DUMP_ACTION",                      SRC_TYPE_STRUCT},
+
     /* AcpiHelp utility */
 
     {"AH_AML_OPCODE",                       SRC_TYPE_STRUCT},
     {"AH_ASL_OPERATOR",                     SRC_TYPE_STRUCT},
     {"AH_ASL_KEYWORD",                      SRC_TYPE_STRUCT},
+    {"AH_DEVICE_ID",                        SRC_TYPE_STRUCT},
     {"AH_PREDEFINED_NAME",                  SRC_TYPE_STRUCT},
 
     /* AcpiXtract utility */
 
     {"AX_TABLE_INFO",                       SRC_TYPE_STRUCT},
+
+    /* OS service layers */
+
+    {"EXTERNAL_FIND_INFO",                  SRC_TYPE_STRUCT},
+    {"OSL_TABLE_INFO",                      SRC_TYPE_STRUCT},
 
     {NULL, 0}
 };
@@ -791,11 +801,19 @@ ACPI_STRING_TABLE           LinuxSpecialStrings[] = {
 
 ACPI_IDENTIFIER_TABLE       LinuxSpecialMacros[] = {
 
+    {"ACPI_DBG_DEPENDENT_RETURN_VOID"},
     {"ACPI_EXPORT_SYMBOL"},
     {"ACPI_EXPORT_SYMBOL_INIT"},
+    {"ACPI_EXTERNAL_RETURN_OK"},
+    {"ACPI_EXTERNAL_RETURN_PTR"},
+    {"ACPI_EXTERNAL_RETURN_STATUS"},
+    {"ACPI_EXTERNAL_RETURN_UINT32"},
+    {"ACPI_EXTERNAL_RETURN_VOID"},
     {"ACPI_HW_DEPENDENT_RETURN_OK"},
     {"ACPI_HW_DEPENDENT_RETURN_STATUS"},
     {"ACPI_HW_DEPENDENT_RETURN_VOID"},
+    {"ACPI_MSG_DEPENDENT_RETURN_VOID"},
+
     {NULL}
 };
 

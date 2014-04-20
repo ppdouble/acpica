@@ -411,7 +411,7 @@ AcpiDbDisplayTableInfo (
 
     /* Header */
 
-    AcpiOsPrintf ("Idx ID Status    Type            Sig  Address  Len   Header\n");
+    AcpiOsPrintf ("Idx ID    Status Type              TableHeader (Sig, Address, Length)\n");
 
     /* Walk the entire root table list */
 
@@ -436,35 +436,30 @@ AcpiDbDisplayTableInfo (
 
         switch (TableDesc->Flags & ACPI_TABLE_ORIGIN_MASK)
         {
-        case ACPI_TABLE_ORIGIN_UNKNOWN:
+        case ACPI_TABLE_ORIGIN_EXTERNAL_VIRTUAL:
 
-            AcpiOsPrintf ("Unknown   ");
+            AcpiOsPrintf ("External/virtual  ");
             break;
 
-        case ACPI_TABLE_ORIGIN_MAPPED:
+        case ACPI_TABLE_ORIGIN_INTERNAL_PHYSICAL:
 
-            AcpiOsPrintf ("Mapped    ");
+            AcpiOsPrintf ("Internal/physical ");
             break;
 
-        case ACPI_TABLE_ORIGIN_ALLOCATED:
+        case ACPI_TABLE_ORIGIN_INTERNAL_VIRTUAL:
 
-            AcpiOsPrintf ("Allocated ");
-            break;
-
-        case ACPI_TABLE_ORIGIN_OVERRIDE:
-
-            AcpiOsPrintf ("Override  ");
+            AcpiOsPrintf ("Internal/virtual  ");
             break;
 
         default:
 
-            AcpiOsPrintf ("INVALID   ");
+            AcpiOsPrintf ("INVALID TYPE      ");
             break;
         }
 
         /* Make sure that the table is mapped */
 
-        Status = AcpiTbVerifyTable (TableDesc);
+        Status = AcpiTbValidateTable (TableDesc);
         if (ACPI_FAILURE (Status))
         {
             return;
@@ -1264,14 +1259,25 @@ AcpiDbGenerateGpe (
     char                    *GpeArg,
     char                    *BlockArg)
 {
-    UINT32                  BlockNumber;
+    UINT32                  BlockNumber = 0;
     UINT32                  GpeNumber;
     ACPI_GPE_EVENT_INFO     *GpeEventInfo;
 
 
-    GpeNumber   = ACPI_STRTOUL (GpeArg, NULL, 0);
-    BlockNumber = ACPI_STRTOUL (BlockArg, NULL, 0);
+    GpeNumber = ACPI_STRTOUL (GpeArg, NULL, 0);
 
+    /*
+     * If no block arg, or block arg == 0 or 1, use the FADT-defined
+     * GPE blocks.
+     */
+    if (BlockArg)
+    {
+        BlockNumber = ACPI_STRTOUL (BlockArg, NULL, 0);
+        if (BlockNumber == 1)
+        {
+            BlockNumber = 0;
+        }
+    }
 
     GpeEventInfo = AcpiEvGetGpeEventInfo (ACPI_TO_POINTER (BlockNumber),
         GpeNumber);
