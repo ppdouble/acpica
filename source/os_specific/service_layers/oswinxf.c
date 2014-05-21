@@ -145,10 +145,6 @@ char                        TableName[ACPI_NAME_SIZE + 1];
 
 /* Upcalls to AcpiExec application */
 
-ACPI_PHYSICAL_ADDRESS
-AeLocalGetRootPointer (
-    void);
-
 void
 AeTableOverride (
     ACPI_TABLE_HEADER       *ExistingTable,
@@ -240,6 +236,7 @@ AcpiOsInitialize (
 }
 
 
+#ifndef ACPI_USE_NATIVE_RSDP_POINTER
 /******************************************************************************
  *
  * FUNCTION:    AcpiOsGetRootPointer
@@ -257,8 +254,9 @@ AcpiOsGetRootPointer (
     void)
 {
 
-    return (AeLocalGetRootPointer ());
+    return (0);
 }
+#endif
 
 
 /******************************************************************************
@@ -626,6 +624,7 @@ AcpiOsGetLine (
 }
 
 
+#ifndef ACPI_USE_NATIVE_MEMORY_MAPPING
 /******************************************************************************
  *
  * FUNCTION:    AcpiOsMapMemory
@@ -671,6 +670,7 @@ AcpiOsUnmapMemory (
 
     return;
 }
+#endif
 
 
 /******************************************************************************
@@ -696,6 +696,33 @@ AcpiOsAllocate (
 
     return (Mem);
 }
+
+
+#ifdef USE_NATIVE_ALLOCATE_ZEROED
+/******************************************************************************
+ *
+ * FUNCTION:    AcpiOsAllocateZeroed
+ *
+ * PARAMETERS:  Size                - Amount to allocate, in bytes
+ *
+ * RETURN:      Pointer to the new allocation. Null on error.
+ *
+ * DESCRIPTION: Allocate and zero memory. Algorithm is dependent on the OS.
+ *
+ *****************************************************************************/
+
+void *
+AcpiOsAllocateZeroed (
+    ACPI_SIZE               Size)
+{
+    void                    *Mem;
+
+
+    Mem = (void *) calloc (1, (size_t) Size);
+
+    return (Mem);
+}
+#endif
 
 
 /******************************************************************************
@@ -1556,6 +1583,23 @@ AcpiOsExecute (
 
     _beginthread (Function, (unsigned) 0, Context);
     return (0);
+}
+
+#else /* ACPI_SINGLE_THREADED */
+ACPI_THREAD_ID
+AcpiOsGetThreadId (
+    void)
+{
+    return (1);
+}
+
+ACPI_STATUS
+AcpiOsExecute (
+    ACPI_EXECUTE_TYPE       Type,
+    ACPI_OSD_EXEC_CALLBACK  Function,
+    void                    *Context)
+{
+    return (AE_SUPPORT);
 }
 
 #endif /* ACPI_SINGLE_THREADED */

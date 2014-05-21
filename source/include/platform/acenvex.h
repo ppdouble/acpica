@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- * Name: acnames.h - Global names and strings
+ * Name: acenvex.h - Extra host and compiler configuration
  *
  *****************************************************************************/
 
@@ -113,46 +113,23 @@
  *
  *****************************************************************************/
 
-#ifndef __ACNAMES_H__
-#define __ACNAMES_H__
+#ifndef __ACENVEX_H__
+#define __ACENVEX_H__
 
-/* Method names - these methods can appear anywhere in the namespace */
+/*! [Begin] no source code translation */
 
-#define METHOD_NAME__ADR        "_ADR"
-#define METHOD_NAME__AEI        "_AEI"
-#define METHOD_NAME__BBN        "_BBN"
-#define METHOD_NAME__CBA        "_CBA"
-#define METHOD_NAME__CID        "_CID"
-#define METHOD_NAME__CRS        "_CRS"
-#define METHOD_NAME__HID        "_HID"
-#define METHOD_NAME__INI        "_INI"
-#define METHOD_NAME__PLD        "_PLD"
-#define METHOD_NAME__PRP        "_PRP"
-#define METHOD_NAME__PRS        "_PRS"
-#define METHOD_NAME__PRT        "_PRT"
-#define METHOD_NAME__PRW        "_PRW"
-#define METHOD_NAME__REG        "_REG"
-#define METHOD_NAME__SB_        "_SB_"
-#define METHOD_NAME__SEG        "_SEG"
-#define METHOD_NAME__SRS        "_SRS"
-#define METHOD_NAME__STA        "_STA"
-#define METHOD_NAME__SUB        "_SUB"
-#define METHOD_NAME__UID        "_UID"
+/******************************************************************************
+ *
+ * Extra host configuration files. All ACPICA headers are included before
+ * including these files.
+ *
+ *****************************************************************************/
 
-/* Method names - these methods must appear at the namespace root */
+#if defined(_LINUX) || defined(__linux__)
+#include "aclinuxex.h"
 
-#define METHOD_PATHNAME__PTS    "\\_PTS"
-#define METHOD_PATHNAME__SST    "\\_SI._SST"
-#define METHOD_PATHNAME__WAK    "\\_WAK"
+#endif
 
-/* Definitions of the predefined namespace names  */
+/*! [End] no source code translation !*/
 
-#define ACPI_UNKNOWN_NAME       (UINT32) 0x3F3F3F3F     /* Unknown name is "????" */
-#define ACPI_ROOT_NAME          (UINT32) 0x5F5F5F5C     /* Root name is    "\___" */
-
-#define ACPI_PREFIX_MIXED       (UINT32) 0x69706341     /* "Acpi" */
-#define ACPI_PREFIX_LOWER       (UINT32) 0x69706361     /* "acpi" */
-
-#define ACPI_NS_ROOT_PATH       "\\"
-
-#endif  /* __ACNAMES_H__  */
+#endif /* __ACENVEX_H__ */

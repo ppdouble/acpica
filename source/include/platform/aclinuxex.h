@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- * Name: acnames.h - Global names and strings
+ * Name: aclinuxex.h - Extra OS specific defines, etc. for Linux
  *
  *****************************************************************************/
 
@@ -113,46 +113,97 @@
  *
  *****************************************************************************/
 
-#ifndef __ACNAMES_H__
-#define __ACNAMES_H__
+#ifndef __ACLINUXEX_H__
+#define __ACLINUXEX_H__
 
-/* Method names - these methods can appear anywhere in the namespace */
+#ifdef __KERNEL__
 
-#define METHOD_NAME__ADR        "_ADR"
-#define METHOD_NAME__AEI        "_AEI"
-#define METHOD_NAME__BBN        "_BBN"
-#define METHOD_NAME__CBA        "_CBA"
-#define METHOD_NAME__CID        "_CID"
-#define METHOD_NAME__CRS        "_CRS"
-#define METHOD_NAME__HID        "_HID"
-#define METHOD_NAME__INI        "_INI"
-#define METHOD_NAME__PLD        "_PLD"
-#define METHOD_NAME__PRP        "_PRP"
-#define METHOD_NAME__PRS        "_PRS"
-#define METHOD_NAME__PRT        "_PRT"
-#define METHOD_NAME__PRW        "_PRW"
-#define METHOD_NAME__REG        "_REG"
-#define METHOD_NAME__SB_        "_SB_"
-#define METHOD_NAME__SEG        "_SEG"
-#define METHOD_NAME__SRS        "_SRS"
-#define METHOD_NAME__STA        "_STA"
-#define METHOD_NAME__SUB        "_SUB"
-#define METHOD_NAME__UID        "_UID"
+/*
+ * Overrides for in-kernel ACPICA
+ */
+ACPI_STATUS __init AcpiOsInitialize (
+    void);
 
-/* Method names - these methods must appear at the namespace root */
+ACPI_STATUS AcpiOsTerminate (
+    void);
 
-#define METHOD_PATHNAME__PTS    "\\_PTS"
-#define METHOD_PATHNAME__SST    "\\_SI._SST"
-#define METHOD_PATHNAME__WAK    "\\_WAK"
+/*
+ * The irqs_disabled() check is for resume from RAM.
+ * Interrupts are off during resume, just like they are for boot.
+ * However, boot has  (system_state != SYSTEM_RUNNING)
+ * to quiet __might_sleep() in kmalloc() and resume does not.
+ */
+static inline void *
+AcpiOsAllocate (
+    ACPI_SIZE               Size)
+{
+    return kmalloc (Size, irqs_disabled () ? GFP_ATOMIC : GFP_KERNEL);
+}
 
-/* Definitions of the predefined namespace names  */
+static inline void *
+AcpiOsAllocateZeroed (
+    ACPI_SIZE               Size)
+{
+    return kzalloc (Size, irqs_disabled () ? GFP_ATOMIC : GFP_KERNEL);
+}
 
-#define ACPI_UNKNOWN_NAME       (UINT32) 0x3F3F3F3F     /* Unknown name is "????" */
-#define ACPI_ROOT_NAME          (UINT32) 0x5F5F5F5C     /* Root name is    "\___" */
+static inline void
+AcpiOsFree (
+    void                   *Memory)
+{
+    kfree (Memory);
+}
 
-#define ACPI_PREFIX_MIXED       (UINT32) 0x69706341     /* "Acpi" */
-#define ACPI_PREFIX_LOWER       (UINT32) 0x69706361     /* "acpi" */
+static inline void *
+AcpiOsAcquireObject (
+    ACPI_CACHE_T           *Cache)
+{
+    return kmem_cache_zalloc (Cache,
+        irqs_disabled () ? GFP_ATOMIC : GFP_KERNEL);
+}
 
-#define ACPI_NS_ROOT_PATH       "\\"
+static inline ACPI_THREAD_ID
+AcpiOsGetThreadId (
+    void)
+{
+    return (ACPI_THREAD_ID) (unsigned long) current;
+}
 
-#endif  /* __ACNAMES_H__  */
+/*
+ * When lockdep is enabled, the spin_lock_init() macro stringifies it's
+ * argument and uses that as a name for the lock in debugging.
+ * By executing spin_lock_init() in a macro the key changes from "lock" for
+ * all locks to the name of the argument of acpi_os_create_lock(), which
+ * prevents lockdep from reporting false positives for ACPICA locks.
+ */
+#define AcpiOsCreateLock(__Handle) \
+    ({ \
+        spinlock_t *Lock = ACPI_ALLOCATE(sizeof(*Lock)); \
+        if (Lock) { \
+            *(__Handle) = Lock; \
+            spin_lock_init(*(__Handle)); \
+        } \
+        Lock ? AE_OK : AE_NO_MEMORY; \
+    })
+
+void __iomem *
+AcpiOsMapMemory (
+    ACPI_PHYSICAL_ADDRESS   Where,
+    ACPI_SIZE               Length);
+
+void
+AcpiOsUnmapMemory (
+    void __iomem            *LogicalAddress,
+    ACPI_SIZE               Size);
+
+/*
+ * OSL interfaces added by Linux
+ */
+void
+EarlyAcpiOsUnmapMemory (
+    void __iomem            *Virt,
+    ACPI_SIZE               Size);
+
+#endif /* __KERNEL__ */
+
+#endif /* __ACLINUXEX_H__ */
