@@ -862,12 +862,13 @@ AcpiDmDisassembleOneOp (
         if (Op->Common.DisasmOpcode == ACPI_DASM_HID_STRING)
         {
             /* If we know about the ID, emit the description */
-
+#if 0
             IdInfo = AcpiAhMatchHardwareId (Op->Common.Value.String);
             if (IdInfo)
             {
                 AcpiOsPrintf (" /* %s */", IdInfo->Description);
             }
+#endif
         }
         break;
 
