@@ -811,12 +811,13 @@ AcpiDmDecompressEisaId (
     AcpiOsPrintf ("EisaId (\"%s\")", IdBuffer);
 
     /* If we know about the ID, emit the description */
-
+#if 0
     Info = AcpiAhMatchHardwareId (IdBuffer);
     if (Info)
     {
         AcpiOsPrintf (" /* %s */", Info->Description);
     }
+#endif
 }
 
 #endif
