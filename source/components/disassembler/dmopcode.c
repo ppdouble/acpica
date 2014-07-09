@@ -202,7 +202,9 @@ AcpiDmDisplayTargetPathname (
 
     if (!PrevOp->Asl.Node)
     {
+#if 0
         AcpiOsPrintf (" /* External reference */");
+#endif
         return;
     }
 
@@ -214,7 +216,7 @@ AcpiDmDisplayTargetPathname (
     }
 
     /* Now: we can get the full pathname */
-
+#if 0
     Pathname = AcpiNsGetExternalPathname (PrevOp->Asl.Node);
     if (!Pathname)
     {
@@ -223,6 +225,7 @@ AcpiDmDisplayTargetPathname (
 
     AcpiOsPrintf (" /* %s */", Pathname);
     ACPI_FREE (Pathname);
+#endif
 }
 
 
@@ -281,8 +284,9 @@ AcpiDmNotifyDescription (
     {
         Type = Node->Type;
     }
-
+#if 0
     AcpiOsPrintf (" // %s", AcpiUtGetNotifyName (NotifyValue, Type));
+#endif
 }
 
 
