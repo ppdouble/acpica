@@ -374,6 +374,7 @@ AcpiUtFormatNumber (
     INT32                   Precision,
     UINT8                   Type)
 {
+    char                    *Pos;
     char                    Sign;
     char                    Zero;
     BOOLEAN                 NeedPrefix;
@@ -431,9 +432,8 @@ AcpiUtFormatNumber (
 
     /* Generate full string in reverse order */
 
-    i = ACPI_PTR_DIFF (
-            AcpiUtPutNumber (ReversedString, Number, Base, Upper),
-            ReversedString);
+    Pos = AcpiUtPutNumber (ReversedString, Number, Base, Upper);
+    i = ACPI_PTR_DIFF (Pos, ReversedString);
 
     /* Printing 100 using %2d gives "100", not "00" */
 
@@ -573,6 +573,7 @@ AcpiUtVsnprintf (
 
         /* Process width */
 
+        Width = -1;
         if (ACPI_IS_DIGIT (*Format))
         {
             Format = AcpiUtScanNumber (Format, &Number);
@@ -591,6 +592,7 @@ AcpiUtVsnprintf (
 
         /* Process precision */
 
+        Precision = -1;
         if (*Format == '.')
         {
             ++Format;
@@ -612,6 +614,7 @@ AcpiUtVsnprintf (
 
         /* Process qualifier */
 
+        Qualifier = -1;
         if (*Format == 'h' || *Format == 'l' || *Format == 'L')
         {
             Qualifier = *Format;

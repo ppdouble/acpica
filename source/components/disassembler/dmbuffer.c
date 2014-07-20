@@ -147,38 +147,6 @@ AcpiDmPldBuffer (
     UINT8                   *ByteData,
     UINT32                  ByteCount);
 
-static char *
-AcpiDmMatchUuid (
-    UINT8                   *Data);
-
-/* Table of "known" (ACPI-specific) UUIDs */
-
-typedef struct ah_uuid
-{
-    char                    *Description;
-    UINT8                   Value[UUID_BUFFER_LENGTH];
-
-} AH_UUID;
-
-static const AH_UUID  AslUuids[] =
-{
-    /* 33db4d5b-1ff7-401c-9657-7441c03dd766 */
-
-    {"PCI Host Bridge Device",
-        {0x5B,0x4D,0xDB,0x33,0xF7,0x1F,0x1C,0x40,
-         0x96,0x57,0x74,0x41,0xC0,0x3D,0xD7,0x66}},
-
-
-    /* 0811b06e-4a27-44f9-8d60-3cbbc22e7b48 */
-
-    {"Platform-wide Capabilities",
-        {0x6E,0xB0,0x11,0x08,0x27,0x4A,0xF9,0x44,
-         0x8D,0x60,0x3C,0xBB,0xC2,0x2E,0x7B,0x48}},
-
-
-    {NULL}
-};
-
 
 #define ACPI_BUFFER_BYTES_PER_LINE      8
 
@@ -458,7 +426,7 @@ AcpiDmUuid (
     ACPI_PARSE_OBJECT       *Op)
 {
     UINT8                   *Data;
-    char                    *Description;
+    const char              *Description;
 
 
     Data = ACPI_CAST_PTR (UINT8, Op->Named.Data);
@@ -479,43 +447,11 @@ AcpiDmUuid (
 
     /* Dump the UUID description string if available */
 
-    Description = AcpiDmMatchUuid (Data);
+    Description = AcpiAhMatchUuid (Data);
     if (Description)
     {
         AcpiOsPrintf (" /* %s */", Description);
     }
-}
-
-
-/*******************************************************************************
- *
- * FUNCTION:    AcpiDmMatchUuid
- *
- * PARAMETERS:  Data                - Data buffer containing a UUID
- *
- * RETURN:      ASCII description string for the UUID if it is found.
- *
- * DESCRIPTION: Returns a description string for "known" UUIDs, which are
- *              are defined here to be UUIDs that are defined by ACPI.
- *
- ******************************************************************************/
-
-static char *
-AcpiDmMatchUuid (
-    UINT8                   *Data)
-{
-    const AH_UUID           *Info;
-
-
-    for (Info = AslUuids; Info->Description; Info++)
-    {
-        if (!ACPI_MEMCMP (Data, Info->Value, UUID_BUFFER_LENGTH))
-        {
-            return (Info->Description);
-        }
-    }
-
-    return (NULL);
 }
 
 
