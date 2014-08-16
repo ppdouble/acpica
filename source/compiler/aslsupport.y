@@ -113,6 +113,7 @@ NoEcho('
  * such license, approval or letter.
  *
  *****************************************************************************/
+
 ')
 
 /******************************************************************************
@@ -138,7 +139,7 @@ AslLocalAllocate (unsigned int Size)
 
     DbgPrint (ASL_PARSE_OUTPUT, "\nAslLocalAllocate: Expanding Stack to %u\n\n", Size);
 
-    Mem = ACPI_ALLOCATE_ZEROED (Size);
+    Mem = UtStringCacheCalloc (Size);
     if (!Mem)
     {
         AslCommonError (ASL_ERROR, ASL_MSG_MEMORY_ALLOCATION,

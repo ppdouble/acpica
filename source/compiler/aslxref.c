@@ -113,7 +113,6 @@
  *
  *****************************************************************************/
 
-
 #include "aslcompiler.h"
 #include "aslcompiler.y.h"
 #include "acparser.h"
@@ -216,6 +215,8 @@ XfCrossReferenceNamespace (
 
     TrWalkParseTree (RootNode, ASL_WALK_VISIT_TWICE, XfNamespaceLocateBegin,
                         XfNamespaceLocateEnd, WalkState);
+
+    ACPI_FREE (WalkState);
     return (AE_OK);
 }
 
