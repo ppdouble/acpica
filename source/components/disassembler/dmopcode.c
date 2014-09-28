@@ -1010,7 +1010,9 @@ AcpiDmDisassembleOneOp (
             Length = (UINT32) Child->Common.Value.Integer;
 
             Info->Level += 1;
+            Info->MappingOp = Op;
             Op->Common.DisasmOpcode = ACPI_DASM_RESOURCE;
+
             AcpiDmResourceTemplate (Info, Op->Common.Parent, Aml, Length);
 
             Info->Level -= 1;
