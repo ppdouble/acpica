@@ -357,6 +357,9 @@ NoEcho('
 %type <n> ResourceMacroList
 %type <n> ResourceMacroTerm
 %type <n> ResourceTemplateTerm
+%type <n> PldKeyword
+%type <n> PldKeywordList
+%type <n> ToPLDTerm
 %type <n> ToUUIDTerm
 %type <n> UnicodeTerm
 
@@ -451,3 +454,9 @@ NoEcho('
 %type <n> OptionalWordConst
 %type <n> OptionalWordConstExpr
 %type <n> OptionalXferSize
+
+/*
+ * C-style expression parser
+ */
+%type <n> Expression
+%type <n> EqualsTerm

@@ -189,7 +189,49 @@ NamePathTail                [.]{NameSeg}
                               else {yyterminate ();} }
 ";"                         { count (0); return(';'); }
 
+    /* ASL Extension: Standard C operators */
 
+"~"                         { count (3); return (PARSEOP_EXP_NOT); }
+"!"                         { count (3); return (PARSEOP_EXP_LOGICAL_NOT); }
+"*"                         { count (3); return (PARSEOP_EXP_MULTIPLY); }
+"/"                         { count (3); return (PARSEOP_EXP_DIVIDE); }
+"%"                         { count (3); return (PARSEOP_EXP_MODULO); }
+"+"                         { count (3); return (PARSEOP_EXP_ADD); }
+"-"                         { count (3); return (PARSEOP_EXP_SUBTRACT); }
+">>"                        { count (3); return (PARSEOP_EXP_SHIFT_RIGHT); }
+"<<"                        { count (3); return (PARSEOP_EXP_SHIFT_LEFT); }
+"<"                         { count (3); return (PARSEOP_EXP_LESS); }
+">"                         { count (3); return (PARSEOP_EXP_GREATER); }
+"&"                         { count (3); return (PARSEOP_EXP_AND); }
+"<="                        { count (3); return (PARSEOP_EXP_LESS_EQUAL); }
+">="                        { count (3); return (PARSEOP_EXP_GREATER_EQUAL); }
+"=="                        { count (3); return (PARSEOP_EXP_EQUAL); }
+"!="                        { count (3); return (PARSEOP_EXP_NOT_EQUAL); }
+"^"                         { count (3); return (PARSEOP_EXP_XOR); }
+"|"                         { count (3); return (PARSEOP_EXP_OR); }
+"&&"                        { count (3); return (PARSEOP_EXP_LOGICAL_AND); }
+"||"                        { count (3); return (PARSEOP_EXP_LOGICAL_OR); }
+"++"                        { count (3); return (PARSEOP_EXP_INCREMENT); }
+"--"                        { count (3); return (PARSEOP_EXP_DECREMENT); }
+
+    /* ASL Extension: Standard C assignment operators */
+
+"="                         { count (3); return (PARSEOP_EXP_EQUALS); }
+"+="                        { count (3); return (PARSEOP_EXP_ADD_EQ); }
+"-="                        { count (3); return (PARSEOP_EXP_SUB_EQ); }
+"*="                        { count (3); return (PARSEOP_EXP_MUL_EQ); }
+"/="                        { count (3); return (PARSEOP_EXP_DIV_EQ); }
+"%="                        { count (3); return (PARSEOP_EXP_MOD_EQ); }
+"<<="                       { count (3); return (PARSEOP_EXP_SHL_EQ); }
+">>="                       { count (3); return (PARSEOP_EXP_SHR_EQ); }
+"&="                        { count (3); return (PARSEOP_EXP_AND_EQ); }
+"^="                        { count (3); return (PARSEOP_EXP_XOR_EQ); }
+"|="                        { count (3); return (PARSEOP_EXP_OR_EQ); }
+
+
+    /*
+     * Begin standard ASL grammar
+     */
 0[xX]{HexDigitChar}+ |
 {DigitChar}+                { AslCompilerlval.i = UtDoConstant ((char *) AslCompilertext);
                                 count (1); return (PARSEOP_INTEGER); }
@@ -664,6 +706,39 @@ NamePathTail                [.]{NameSeg}
 "Transfer8_16"              { count (0); return (PARSEOP_XFERTYPE_8_16); }
 "Transfer16"                { count (0); return (PARSEOP_XFERTYPE_16); }
 
+    /* ToPld macro */
+
+"ToPLD"                     { count (0); return (PARSEOP_TOPLD); }
+
+"PLDRevision"               { count (0); return (PARSEOP_PLD_REVISION); }
+"IgnoreColor"               { count (0); return (PARSEOP_PLD_IGNORECOLOR); }
+"Red"                       { count (0); return (PARSEOP_PLD_RED); }
+"Green"                     { count (0); return (PARSEOP_PLD_GREEN); }
+"Blue"                      { count (0); return (PARSEOP_PLD_BLUE); }
+"Width"                     { count (0); return (PARSEOP_PLD_WIDTH); }
+"Height"                    { count (0); return (PARSEOP_PLD_HEIGHT); }
+"UserVisible"               { count (0); return (PARSEOP_PLD_USERVISIBLE); }
+"Dock"                      { count (0); return (PARSEOP_PLD_DOCK); }
+"Lid"                       { count (0); return (PARSEOP_PLD_LID); }
+"Panel"                     { count (0); return (PARSEOP_PLD_PANEL); }
+"VerticalPosition"          { count (0); return (PARSEOP_PLD_VERTICALPOSITION); }
+"HorizontalPosition"        { count (0); return (PARSEOP_PLD_HORIZONTALPOSITION); }
+"Shape"                     { count (0); return (PARSEOP_PLD_SHAPE); }
+"GroupOrientation"          { count (0); return (PARSEOP_PLD_GROUPORIENTATION); }
+"GroupToken"                { count (0); return (PARSEOP_PLD_GROUPTOKEN); }
+"GroupPosition"             { count (0); return (PARSEOP_PLD_GROUPPOSITION); }
+"Bay"                       { count (0); return (PARSEOP_PLD_BAY); }
+"Ejectable"                 { count (0); return (PARSEOP_PLD_EJECTABLE); }
+"EjectRequired"             { count (0); return (PARSEOP_PLD_EJECTREQUIRED); }
+"CabinetNumber"             { count (0); return (PARSEOP_PLD_CABINETNUMBER); }
+"CardCageNumber"            { count (0); return (PARSEOP_PLD_CARDCAGENUMBER); }
+"Reference"                 { count (0); return (PARSEOP_PLD_REFERENCE); }
+"Rotation"                  { count (0); return (PARSEOP_PLD_ROTATION); }
+"Order"                     { count (0); return (PARSEOP_PLD_ORDER); }
+"Reserved"                  { count (0); return (PARSEOP_PLD_RESERVED); }
+"VerticalOffset"            { count (0); return (PARSEOP_PLD_VERTICALOFFSET); }
+"HorizontalOffset"          { count (0); return (PARSEOP_PLD_HORIZONTALOFFSET); }
+
     /* Predefined compiler names */
 
 "__DATE__"                  { count (0); return (PARSEOP___DATE__); }
@@ -699,10 +774,6 @@ NamePathTail                [.]{NameSeg}
                                 AslCompilerlval.s = s;
                                 DbgPrint (ASL_PARSE_OUTPUT, "NameString: %s\n", s);
                                 return (PARSEOP_NAMESTRING); }
-
-"*" |
-"/"                         { count (1);
-                                AslCompilererror ("Parse error, expecting ASL keyword or name");}
 
 .                           { count (1);
                                 sprintf (MsgBuffer,
