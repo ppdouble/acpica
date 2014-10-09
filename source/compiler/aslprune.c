@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- * Module Name: aecommon - common include for the AcpiExec utility
+ * Module Name: aslprune - Parse tree prune utility
  *
  *****************************************************************************/
 
@@ -113,187 +113,199 @@
  *
  *****************************************************************************/
 
-#ifndef _AECOMMON
-#define _AECOMMON
-
-#ifdef _MSC_VER                 /* disable some level-4 warnings */
-#pragma warning(disable:4100)   /* warning C4100: unreferenced formal parameter */
-#endif
-
-#include "acpi.h"
-#include "accommon.h"
-#include "acparser.h"
-#include "amlcode.h"
-#include "acnamesp.h"
-#include "acdebug.h"
-#include "actables.h"
-#include "acinterp.h"
-#include "amlresrc.h"
+#include "aslcompiler.h"
+#include "aslcompiler.y.h"
 #include "acapps.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <signal.h>
+#define _COMPONENT          ACPI_COMPILER
+        ACPI_MODULE_NAME    ("aslprune")
 
-extern BOOLEAN              AcpiGbl_IgnoreErrors;
-extern UINT8                AcpiGbl_RegionFillValue;
-extern UINT8                AcpiGbl_UseHwReducedFadt;
-extern BOOLEAN              AcpiGbl_DisplayRegionAccess;
-extern BOOLEAN              AcpiGbl_DoInterfaceTests;
-extern BOOLEAN              AcpiGbl_LoadTestTables;
-extern FILE                 *AcpiGbl_NamespaceInitFile;
-extern ACPI_CONNECTION_INFO AeMyContext;
 
-/* Check for unexpected exceptions */
+/* Local prototypes */
 
-#define AE_CHECK_STATUS(Name, Status, Expected) \
-    if (Status != Expected) \
-    { \
-        AcpiOsPrintf ("Unexpected %s from %s (%s-%d)\n", \
-            AcpiFormatException (Status), #Name, _AcpiModuleName, __LINE__); \
+static ACPI_STATUS
+PrTreePruneWalk (
+    ACPI_PARSE_OBJECT       *Op,
+    UINT32                  Level,
+    void                    *Context);
+
+static void
+PrPrintObjectAtLevel (
+    UINT32                  Level,
+    const char              *ObjectName);
+
+
+typedef struct acpi_prune_info
+{
+    UINT32                  PruneLevel;
+    UINT16                  ParseOpcode;
+    UINT16                  Count;
+
+} ACPI_PRUNE_INFO;
+
+
+/*******************************************************************************
+ *
+ * FUNCTION:    AslPruneParseTree
+ *
+ * PARAMETERS:  PruneDepth              - Number of levels to prune
+ *              Type                    - Prune type (Device, Method, etc.)
+ *
+ * RETURN:      None
+ *
+ * DESCRIPTION: Prune off one or more levels of the ASL parse tree
+ *
+ ******************************************************************************/
+
+void
+AslPruneParseTree (
+    UINT32                  PruneDepth,
+    UINT32                  Type)
+{
+    ACPI_PRUNE_INFO         PruneObj;
+
+
+    PruneObj.PruneLevel = PruneDepth;
+    PruneObj.Count = 0;
+
+    switch (Type)
+    {
+    case 0:
+        PruneObj.ParseOpcode = (UINT16) PARSEOP_DEVICE;
+        break;
+
+    case 1:
+        PruneObj.ParseOpcode = (UINT16) PARSEOP_METHOD;
+        break;
+
+    case 2:
+        PruneObj.ParseOpcode = (UINT16) PARSEOP_IF;
+        break;
+
+    default:
+        AcpiOsPrintf ("Unsupported type: %u\n", Type);
+        return;
     }
 
-/* Check for unexpected non-AE_OK errors */
+    AcpiOsPrintf ("Pruning parse tree, from depth %u\n",
+        PruneDepth);
 
-#define AE_CHECK_OK(Name, Status)   AE_CHECK_STATUS (Name, Status, AE_OK);
+    AcpiOsPrintf ("\nRemoving Objects:\n");
 
-typedef struct ae_table_desc
+    TrWalkParseTree (RootNode, ASL_WALK_VISIT_DOWNWARD,
+        PrTreePruneWalk, NULL, ACPI_CAST_PTR (void, &PruneObj));
+
+    AcpiOsPrintf ("\n%u Total Objects Removed\n", PruneObj.Count);
+}
+
+
+/*******************************************************************************
+ *
+ * FUNCTION:    PrPrintObjectAtLevel
+ *
+ * PARAMETERS:  Level                   - Current nesting level
+ *              ObjectName              - ACPI name for the object
+ *
+ * RETURN:      None
+ *
+ * DESCRIPTION: Print object name with indent
+ *
+ ******************************************************************************/
+
+static void
+PrPrintObjectAtLevel (
+    UINT32                  Level,
+    const char              *ObjectName)
 {
-    ACPI_TABLE_HEADER       *Table;
-    struct ae_table_desc    *Next;
+    UINT32                  i;
 
-} AE_TABLE_DESC;
 
-/*
- * Debug Regions
- */
-typedef struct ae_region
+    for (i = 0; i < Level; i++)
+    {
+        AcpiOsPrintf ("  ");
+    }
+
+    AcpiOsPrintf ("[%s] at Level [%u]\n", ObjectName, Level);
+}
+
+
+/*******************************************************************************
+ *
+ * FUNCTION:    PrTreePruneWalk
+ *
+ * PARAMETERS:  Parse tree walk callback
+ *
+ * RETURN:      Status
+ *
+ * DESCRIPTION: Prune off one or more levels of the ASL parse tree
+ *
+ * Current objects that can be pruned are: Devices, Methods, and If/Else
+ * blocks.
+ *
+ ******************************************************************************/
+
+static ACPI_STATUS
+PrTreePruneWalk (
+    ACPI_PARSE_OBJECT       *Op,
+    UINT32                  Level,
+    void                    *Context)
 {
-    ACPI_PHYSICAL_ADDRESS   Address;
-    UINT32                  Length;
-    void                    *Buffer;
-    void                    *NextRegion;
-    UINT8                   SpaceId;
-
-} AE_REGION;
-
-typedef struct ae_debug_regions
-{
-    UINT32                  NumberOfRegions;
-    AE_REGION               *RegionList;
-
-} AE_DEBUG_REGIONS;
+    ACPI_PRUNE_INFO         *PruneObj = (ACPI_PRUNE_INFO *) Context;
 
 
-#define TEST_OUTPUT_LEVEL(lvl)          if ((lvl) & OutputLevel)
+    /* We only care about objects below the Prune Level threshold */
 
-#define OSD_PRINT(lvl,fp)               TEST_OUTPUT_LEVEL(lvl) {\
-                                            AcpiOsPrintf PARAM_LIST(fp);}
+    if (Level <= PruneObj->PruneLevel)
+    {
+        return (AE_OK);
+    }
 
-void ACPI_SYSTEM_XFACE
-AeCtrlCHandler (
-    int                     Sig);
+    if ((Op->Asl.ParseOpcode != PruneObj->ParseOpcode) &&
+       !(Op->Asl.ParseOpcode == PARSEOP_ELSE &&
+             PruneObj->ParseOpcode == PARSEOP_IF))
+    {
+        return (AE_OK);
+    }
 
-ACPI_STATUS
-AeBuildLocalTables (
-    UINT32                  TableCount,
-    AE_TABLE_DESC           *TableList);
+    switch (Op->Asl.ParseOpcode)
+    {
+    case PARSEOP_METHOD:
 
-ACPI_STATUS
-AeInstallTables (
-    void);
+        AcpiOsPrintf ("Method");
+        PrPrintObjectAtLevel (Level, Op->Asl.Child->Asl.Value.Name);
+        Op->Asl.Child->Asl.Next->Asl.Next->Asl.Next->Asl.Next->Asl.Next->Asl.Next = NULL;
+        PruneObj->Count++;
+        break;
 
-void
-AeDumpNamespace (
-    void);
+    case PARSEOP_DEVICE:
 
-void
-AeDumpObject (
-    char                    *MethodName,
-    ACPI_BUFFER             *ReturnObj);
+        AcpiOsPrintf ("Device");
+        PrPrintObjectAtLevel (Level, Op->Asl.Child->Asl.Value.Name);
+        Op->Asl.Child->Asl.Next = NULL;
+        PruneObj->Count++;
+        break;
 
-void
-AeDumpBuffer (
-    UINT32                  Address);
+    case PARSEOP_IF:
+    case PARSEOP_ELSE:
 
-void
-AeExecute (
-    char                    *Name);
+        if (Op->Asl.ParseOpcode == PARSEOP_ELSE)
+        {
+            PrPrintObjectAtLevel(Level, "Else");
+            Op->Asl.Child = NULL;
+        }
+        else
+        {
+            PrPrintObjectAtLevel(Level, "If");
+            Op->Asl.Child->Asl.Next = NULL;
+        }
 
-void
-AeSetScope (
-    char                    *Name);
+        PruneObj->Count++;
+        break;
 
-void
-AeCloseDebugFile (
-    void);
+    default:
 
-void
-AeOpenDebugFile (
-    char                    *Name);
+        break;
+    }
 
-ACPI_STATUS
-AeDisplayAllMethods (
-    UINT32                  DisplayCount);
-
-ACPI_STATUS
-AeInstallEarlyHandlers (
-    void);
-
-ACPI_STATUS
-AeInstallLateHandlers (
-    void);
-
-void
-AeMiscellaneousTests (
-    void);
-
-ACPI_STATUS
-AeRegionHandler (
-    UINT32                  Function,
-    ACPI_PHYSICAL_ADDRESS   Address,
-    UINT32                  BitWidth,
-    UINT64                  *Value,
-    void                    *HandlerContext,
-    void                    *RegionContext);
-
-UINT32
-AeGpeHandler (
-    ACPI_HANDLE             GpeDevice,
-    UINT32                  GpeNumber,
-    void                    *Context);
-
-void
-AeGlobalEventHandler (
-    UINT32                  Type,
-    ACPI_HANDLE             GpeDevice,
-    UINT32                  EventNumber,
-    void                    *Context);
-
-/* aeregion */
-
-ACPI_STATUS
-AeInstallDeviceHandlers (
-    void);
-
-void
-AeInstallRegionHandlers (
-    void);
-
-void
-AeOverrideRegionHandlers (
-    void);
-
-
-/* aeinitfile */
-
-int
-AeOpenInitializationFile (
-    char                    *Filename);
-
-void
-AeDoObjectOverrides (
-    void);
-
-#endif /* _AECOMMON */
+    return (AE_OK);
+}
