@@ -657,7 +657,10 @@ AcpiDmIsPldBuffer (
     ACPI_NAMESPACE_NODE     *Node;
     ACPI_PARSE_OBJECT       *SizeOp;
     ACPI_PARSE_OBJECT       *ParentOp;
-
+    
+//REVIEW_REHAB: disable this for now (compiler can't handle this disassembler output)
+    return (FALSE);
+////
 
     /* Buffer size is the buffer argument */
 
