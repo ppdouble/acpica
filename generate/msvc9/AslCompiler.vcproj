@@ -931,6 +931,10 @@
 					</FileConfiguration>
 				</File>
 				<File
+					RelativePath="..\..\source\components\disassembler\dmcstyle.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\source\components\disassembler\dmdeferred.c"
 					>
 				</File>
@@ -2094,26 +2098,6 @@
 				</File>
 			</Filter>
 			<Filter
-				Name="Preprocessor"
-				>
-				<File
-					RelativePath="..\..\source\compiler\prexpress.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\source\compiler\prmacros.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\source\compiler\prscan.c"
-					>
-				</File>
-				<File
-					RelativePath="..\..\source\compiler\prutils.c"
-					>
-				</File>
-			</Filter>
-			<Filter
 				Name="Common"
 				Filter=".c"
 				>
@@ -3029,6 +3013,10 @@
 					>
 				</File>
 				<File
+					RelativePath="..\..\source\compiler\aslprintf.c"
+					>
+				</File>
+				<File
 					RelativePath="..\..\source\compiler\aslprune.c"
 					>
 				</File>
@@ -3874,6 +3862,26 @@
 							WarningLevel="3"
 						/>
 					</FileConfiguration>
+				</File>
+			</Filter>
+			<Filter
+				Name="Preprocessor"
+				>
+				<File
+					RelativePath="..\..\source\compiler\prexpress.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\source\compiler\prmacros.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\source\compiler\prscan.c"
+					>
+				</File>
+				<File
+					RelativePath="..\..\source\compiler\prutils.c"
+					>
 				</File>
 			</Filter>
 		</Filter>
