@@ -555,11 +555,12 @@ AcpiDmIsUnicodeBuffer (
         return (FALSE);
     }
 
-    /* For each word, 1st byte must be ascii, 2nd byte must be zero */
+    /* For each word, 1st byte must be ascii (1-0x7F), 2nd byte must be zero */
 
     for (i = 0; i < (ByteCount - 2); i += 2)
     {
-        if ((!ACPI_IS_PRINT (ByteData[i])) ||
+        if ((ByteData[i] == 0) ||
+            (ByteData[i] > 0x7F) ||
             (ByteData[(ACPI_SIZE) i + 1] != 0))
         {
             return (FALSE);
@@ -891,6 +892,7 @@ AcpiDmUnicode (
     UINT16                  *WordData;
     UINT32                  WordCount;
     UINT32                  i;
+    int                     OutputValue;
 
 
     /* Extract the buffer info as a WORD buffer */
@@ -903,7 +905,23 @@ AcpiDmUnicode (
     AcpiOsPrintf ("\"");
     for (i = 0; i < (WordCount - 1); i++)
     {
-        AcpiOsPrintf ("%c", (int) WordData[i]);
+        OutputValue = (int) WordData[i];
+
+        /* Handle values that must be escaped */
+
+        if ((OutputValue == '\"') ||
+            (OutputValue == '\\'))
+        {
+            AcpiOsPrintf ("\\%c", OutputValue);
+        }
+        else if (!ACPI_IS_PRINT (OutputValue))
+        {
+            AcpiOsPrintf ("\\x%2.2X", OutputValue);
+        }
+        else
+        {
+            AcpiOsPrintf ("%c", OutputValue);
+        }
     }
 
     AcpiOsPrintf ("\")");

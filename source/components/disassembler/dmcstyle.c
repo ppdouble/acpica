@@ -144,7 +144,8 @@ AcpiDmIsValidTarget (
 static BOOLEAN
 AcpiDmIsTargetAnOperand (
     ACPI_PARSE_OBJECT       *Target,
-    ACPI_PARSE_OBJECT       *Operand);
+    ACPI_PARSE_OBJECT       *Operand,
+    BOOLEAN                 TopLevel);
 
 
 /*******************************************************************************
@@ -414,8 +415,8 @@ AcpiDmCheckForSymbolicOpcode (
          * Determine if either operand is the same as the target
          * and display compound assignment operator and other operand.
          */
-        if ((AcpiDmIsTargetAnOperand (Target, Child1)) ||
-            (AcpiDmIsTargetAnOperand (Target, Child2)))
+        if ((AcpiDmIsTargetAnOperand (Target, Child1, TRUE)) ||
+            (AcpiDmIsTargetAnOperand (Target, Child2, TRUE)))
         {
             Target->Common.OperatorSymbol =
                 AcpiDmGetCompoundSymbol (Op->Common.AmlOpcode);
@@ -427,9 +428,45 @@ AcpiDmCheckForSymbolicOpcode (
             return (TRUE);
         }
 
+        /*
+         * If we are within a C-style expression, emit an extra open
+         * paren. Implemented by examining the parent op.
+         */
+        switch (Op->Common.Parent->Common.AmlOpcode)
+        {
+        case AML_ADD_OP:
+        case AML_SUBTRACT_OP:
+        case AML_MULTIPLY_OP:
+        case AML_DIVIDE_OP:
+        case AML_MOD_OP:
+        case AML_SHIFT_LEFT_OP:
+        case AML_SHIFT_RIGHT_OP:
+        case AML_BIT_AND_OP:
+        case AML_BIT_OR_OP:
+        case AML_BIT_XOR_OP:
+        case AML_LAND_OP:
+        case AML_LEQUAL_OP:
+        case AML_LGREATER_OP:
+        case AML_LLESS_OP:
+        case AML_LOR_OP:
+
+            Op->Common.DisasmFlags |= ACPI_PARSEOP_ASSIGNMENT;
+            AcpiOsPrintf ("(");
+            break;
+
+        default:
+            break;
+        }
+
         /* Normal output for ASL/AML operators with a target operand */
 
         Target->Common.OperatorSymbol = " = (";
+        return (TRUE);
+
+    /* Binary operators, no parens */
+
+    case AML_DECREMENT_OP:
+    case AML_INCREMENT_OP:
         return (TRUE);
 
 #ifdef INDEX_SUPPORT
@@ -529,6 +566,8 @@ AcpiDmCloseOperator (
         return;
     }
 
+    /* Check if we need to add an additional closing paren */
+
     switch (Op->Common.AmlOpcode)
     {
     case AML_ADD_OP:
@@ -546,8 +585,6 @@ AcpiDmCloseOperator (
     case AML_LGREATER_OP:
     case AML_LLESS_OP:
     case AML_LOR_OP:
-    case AML_DECREMENT_OP:
-    case AML_INCREMENT_OP:
 
         /* Emit paren only if this is not a compound assignment */
 
@@ -555,14 +592,23 @@ AcpiDmCloseOperator (
         {
             return;
         }
+
+        /* Emit extra close paren for assignment within an expression */
+
+        if (Op->Common.DisasmFlags & ACPI_PARSEOP_ASSIGNMENT)
+        {
+            AcpiOsPrintf (")");
+        }
         break;
 
-    /* No need for parens for these */
 
+    /* No need for parens for these */
 
 #ifdef INDEX_SUPPORT
     case AML_INDEX_OP:
 #endif
+    case AML_DECREMENT_OP:
+    case AML_INCREMENT_OP:
     case AML_LNOT_OP:
     case AML_BIT_NOT_OP:
     case AML_STORE_OP:
@@ -738,27 +784,62 @@ AcpiDmIsValidTarget (
 static BOOLEAN
 AcpiDmIsTargetAnOperand (
     ACPI_PARSE_OBJECT       *Target,
-    ACPI_PARSE_OBJECT       *Operand)
+    ACPI_PARSE_OBJECT       *Operand,
+    BOOLEAN                 TopLevel)
 {
+    const ACPI_OPCODE_INFO  *OpInfo;
+    BOOLEAN                 Same;
+
 
     /*
-     * For Namepaths we simply compare the namespace nodes when
-     * they are not NULL. For Args and Locals we compare the AML
-     * opcodes when the namspace node is NULL.
+     * Opcodes must match. Note: ignoring the difference between nameseg
+     * and namepath for now. May be needed later.
      */
-    if ((!Target->Common.Node &&
-         (Target->Common.AmlOpcode == Operand->Common.AmlOpcode)) ||
-
-        (Target->Common.Node &&
-        (Target->Common.Node == Operand->Common.Node)))
+    if (Target->Common.AmlOpcode != Operand->Common.AmlOpcode)
     {
-        /* Supress the duplicate operand */
-
-        Operand->Common.DisasmFlags |= ACPI_PARSEOP_IGNORE;
-        return (TRUE);
+        return (FALSE);
     }
 
-    return (FALSE);
+    /* Nodes should match, even if they are NULL */
+
+    if (Target->Common.Node != Operand->Common.Node)
+    {
+        return (FALSE);
+    }
+
+    /* Determine if a child exists */
+
+    OpInfo = AcpiPsGetOpcodeInfo (Operand->Common.AmlOpcode);
+    if (OpInfo->Flags & AML_HAS_ARGS)
+    {
+        Same = AcpiDmIsTargetAnOperand (Target->Common.Value.Arg,
+            Operand->Common.Value.Arg, FALSE);
+        if (!Same)
+        {
+            return (FALSE);
+        }
+    }
+
+    /* Check the next peer, as long as we are not at the top level */
+
+    if ((!TopLevel) &&
+         Target->Common.Next)
+    {
+        Same = AcpiDmIsTargetAnOperand (Target->Common.Next,
+            Operand->Common.Next, FALSE);
+        if (!Same)
+        {
+            return (FALSE);
+        }
+    }
+
+    /* Supress the duplicate operand at the top-level */
+
+    if (TopLevel)
+    {
+        Operand->Common.DisasmFlags |= ACPI_PARSEOP_IGNORE;
+    }
+    return (TRUE);
 }
 
 #endif
