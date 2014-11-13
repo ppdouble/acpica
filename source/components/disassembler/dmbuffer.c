@@ -220,7 +220,7 @@ AcpiDmDisasmByteList (
     UINT32                  i;
     UINT32                  j;
     UINT32                  CurrentIndex;
-    UINT8                   BufChar;
+/*    UINT8                   BufChar; */
 
 
     if (!ByteCount)
@@ -266,6 +266,7 @@ AcpiDmDisasmByteList (
         }
 
         /* Dump the ASCII equivalents within a comment */
+/*REVIEW_REHAB: disable this for now as it causes problems for MaciASL */
 #if 0
         AcpiOsPrintf ("  /* ");
         for (j = 0; j < ACPI_BUFFER_BYTES_PER_LINE; j++)
@@ -659,10 +660,6 @@ AcpiDmIsPldBuffer (
     ACPI_PARSE_OBJECT       *SizeOp;
     ACPI_PARSE_OBJECT       *ParentOp;
     
-//REVIEW_REHAB: disable this for now (compiler can't handle this disassembler output)
-    return (FALSE);
-////
-
     /* Buffer size is the buffer argument */
 
     SizeOp = Op->Common.Value.Arg;
@@ -1092,7 +1089,10 @@ AcpiDmDecompressEisaId (
     UINT32                  EncodedId)
 {
     char                    IdBuffer[ACPI_EISAID_STRING_SIZE];
+/*REVIEW_REHAB: disable this for now as it causes issues with MaciASL...*/
+#if 0
     const AH_DEVICE_ID      *Info;
+#endif
 
 
     /* Convert EISAID to a string an emit the statement */
@@ -1101,6 +1101,7 @@ AcpiDmDecompressEisaId (
     AcpiOsPrintf ("EisaId (\"%s\")", IdBuffer);
 
     /* If we know about the ID, emit the description */
+/*REVIEW_REHAB: disable this for now as it causes issues with MaciASL...*/
 #if 0
     Info = AcpiAhMatchHardwareId (IdBuffer);
     if (Info)
