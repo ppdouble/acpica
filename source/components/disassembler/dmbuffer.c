@@ -660,6 +660,9 @@ AcpiDmIsPldBuffer (
     ACPI_PARSE_OBJECT       *SizeOp;
     ACPI_PARSE_OBJECT       *ParentOp;
     
+/*REVIEW_REHAB: disable special case for _PLD (ToPLD is problematic)*/
+    return 0;
+
     /* Buffer size is the buffer argument */
 
     SizeOp = Op->Common.Value.Arg;
