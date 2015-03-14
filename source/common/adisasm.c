@@ -375,7 +375,7 @@ AdAmlDisassemble (
             return (Status);
         }
 
-        if (!AcpiGbl_DbOpt_disasm)
+        if (!AcpiGbl_DbOpt_Disasm)
         {
             return (AE_OK);
         }
@@ -423,7 +423,9 @@ AdAmlDisassemble (
 
     *OutFilename = DisasmFilename;
 
-    if (!AcpiUtIsAmlTable (Table))
+    /* ForceAmlDisassembly means to assume the table contains valid AML */
+
+    if (!AcpiGbl_ForceAmlDisassembly && !AcpiUtIsAmlTable (Table))
     {
         AdDisassemblerHeader (Filename);
         AcpiOsPrintf (" * ACPI Data Table [%4.4s]\n *\n",
@@ -563,7 +565,7 @@ AdAmlDisassemble (
 
         /* Optional displays */
 
-        if (AcpiGbl_DbOpt_disasm)
+        if (AcpiGbl_DbOpt_Disasm)
         {
             /* This is the real disassembly */
 
@@ -592,7 +594,7 @@ AdAmlDisassemble (
 
 Cleanup:
 
-    if (Table && !AcpiUtIsAmlTable (Table))
+    if (Table && !AcpiGbl_ForceAmlDisassembly &&!AcpiUtIsAmlTable (Table))
     {
         ACPI_FREE (Table);
     }
@@ -794,7 +796,7 @@ AdDisplayTables (
         return (AE_NOT_EXIST);
     }
 
-    if (!AcpiGbl_DbOpt_verbose)
+    if (!AcpiGbl_DbOpt_Verbose)
     {
         AdCreateTableHeader (Filename, Table);
     }
@@ -802,7 +804,7 @@ AdDisplayTables (
     AcpiDmDisassemble (NULL, AcpiGbl_ParseOpRoot, ACPI_UINT32_MAX);
     MpEmitMappingInfo ();
 
-    if (AcpiGbl_DbOpt_verbose)
+    if (AcpiGbl_DbOpt_Verbose)
     {
         AcpiOsPrintf ("\n\nTable Header:\n");
         AcpiUtDebugDumpBuffer ((UINT8 *) Table, sizeof (ACPI_TABLE_HEADER),
